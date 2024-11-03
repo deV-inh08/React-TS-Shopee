@@ -1,54 +1,62 @@
-// import React, {useEffect, useState} from 'react'
+import React from 'react'
+import { useQuery } from '@tanstack/react-query';
 import AsideFilter from '../../components/AsideFilter';
 import SortProductList from '../../components/SortProductList';
+import {HashLoader} from "react-spinners"
+import { useQueryParams } from "use-query-params"
 import productsAPI from '../../apis/product.api';
-import { ProductList, ProductListConfig } from '../../types/products.type';
-// import Nextpage from '../../components/Pagination';
-// import {HashLoader} from "react-spinners"
-import useQueryParams from '../../hooks/useQueryParams';
-import { useQuery } from '@tanstack/react-query';
+import { ProductListConfig, Product as ProductType } from '../../types/products.type';
 import Product from '../../components/Product';
-
-
-// type ProductProps = {
-//   products: ProductType[]
-//   total: number
-//   limit: number
-// }
+import { omitBy, isUndefined } from 'lodash';
+import Pagination from '../../components/Pagination/Pagination';
 
 export type QueryConfig = {
   [key in keyof ProductListConfig]: string
 }
 
 const ProductList = () => {
+  let TOTALPAGE;
+
   // const [getProducts, setGetProducts] = useState<ProductProps>({
   //   products: [],
   //   total: 0,
   //   limit: 15
   // });
-  // const [nextPage, setNextPage] = useState<number>(1);
   // const [isLoading, setIsLoading] = useState<boolean>(false)
   // const {products, total, limit} = getProducts
-
   // const totalPages = Math.ceil(total / limit)
 
-  const queryParams = useQueryParams();
-  // const queryConfig: QueryConfig = {
-  //   skip: queryParams.skip || "0",
-  //   limit: queryParams.limit || "15",
-  //   sortBy: queryParams.sortBy,
-  //   order: queryParams.order,
-  //   rating: queryParams.rating,
-  //   title: queryParams.title
-  // }
+  const queryParams: QueryConfig = useQueryParams()
+  const queryConfig: QueryConfig = omitBy({
+    skip: queryParams.skip || "0",
+    limit: queryParams.limit || "15",
+    sortBy: queryParams.sortBy,
+    order: queryParams.order,
+    rating: queryParams.rating,
+    title: queryParams.title
+  }, isUndefined);
+
+  // const [query] = useQueryParams({
+  //   limit: NumberParam,
+  //   skip: NumberParam,
+  // }) as ProductListConfig;
 
 
-  const { data } = useQuery<ProductList | undefined>({
-    queryKey: ['products', queryParams],
+  
+  const { data, isLoading } = useQuery({
+    queryKey: ['/products', queryConfig],
     queryFn: () => {
-      return productsAPI.getProducts(queryParams)
+      return productsAPI.getProducts(queryConfig) as ProductListConfig
     }
   });
+
+  console.log(queryConfig)
+
+  if(data && data.total && data.limit) {
+    TOTALPAGE = Math.ceil(data.total / data.limit)
+  };
+
+
 
   // useEffect(() => {
   //       const loadingProducts = async () => {
@@ -68,7 +76,7 @@ const ProductList = () => {
   // }, [nextPage]);
 
   // const handlePageChange = (newPage: number) => {
-  //   if(newPage <= totalPages) {
+  //   if(newPage <= TOTALPAGE) {
   //     setNextPage(newPage)
   //   } else {
   //     setNextPage(1)
@@ -83,38 +91,32 @@ const ProductList = () => {
           </div>
           <div className='col-span-9 '>
             <SortProductList></SortProductList>
-              {/* {isLoading 
-                ? (
-                    <div className='fixed inset-0 bg-gray-300 bg-opacity-60 flex items-center justify-center z-50'>
-                      <HashLoader
-                        loading={isLoading}
-                        color='#f78012' // Màu cam
-                        size={50} // Kích thước của loader (có thể tùy chỉnh)
-                      />
-                    </div>
-                  )
-                : (
-                  <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 items-stretch'>
-                    {data && data.data.data.products.map((item, index) => {
-                      return (
-                        <div className='col-span-1' key={index}>
-                          <Product item={item}></Product>
-                        </div>
-                      )
-                    })}
+            {data && data.products && data.products.length > 0 ? (
+                <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 items-stretch'>
+                  {data.products.map((item: ProductType, index: number) => {
+                    return (
+                      <div key={index} className='col-span-1'>
+                        <Product item={item} />
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 items-stretch'>
+                  <div className='fixed z-50'>
+                        <HashLoader
+                          loading={isLoading}
+                          color='#f78012' // Màu cam
+                          size={50} // Kích thước của loader (có thể tùy chỉnh)
+                        />
                   </div>
-                )  
-              } */}
-              {/* <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 items-stretch'>
-                    {data && data.data.data.products}
-              </div> */}
+                </div>
+            )}
             <article className='mx-auto'>
-              {/* <Nextpage
-                page= {nextPage}
-                onPageChange= {handlePageChange}
-                totalPages= {totalPages}
-                setNextPage={setNextPage}
-              ></Nextpage> */}
+              <Pagination
+                TOTALPAGE= {TOTALPAGE}
+                queryConfig= {queryConfig}
+              ></Pagination>
             </article>
           </div>
         </div>

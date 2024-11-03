@@ -4,7 +4,7 @@ import Login from '../pages/Login'
 import Register from '../pages/Register'
 import RegisterLayout from '../layouts/RegisterLayout/RegisterLayout'
 import MainLayout from '../layouts/MainLayout'
-import PageNotFound from '../pages/PageNotFound'
+// import PageNotFound from '../pages/PageNotFound'
 import Profile from '../pages/Profile'
 import { useContext } from 'react'
 import { AppContext } from '../contexts/app.context'
@@ -25,7 +25,7 @@ function RejectRouted() {
 export const useRouteElements = () => {
     const routeElements = useRoutes([
         {
-            path: '/',
+            path: '/products',
             index: true, 
             element: (
                 <MainLayout>
@@ -65,7 +65,7 @@ export const useRouteElements = () => {
         },
         {
             path: "/*",
-            element: <PageNotFound></PageNotFound>
+            element: <MainLayout><ProductList/></MainLayout>
         }   
     ])
     return routeElements

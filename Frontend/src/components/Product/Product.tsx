@@ -9,7 +9,7 @@ interface ProductProps {
     item: ProductType
 }
 
-const Product:React.FC<ProductProps> = React.memo(({item}) => {    
+const Product:React.FC<ProductProps> = ({item}) => {    
     const price = new Intl.NumberFormat("de-DE").format(item.price * 24000)
     const formatNumberSoical = (num: number) => {
       if(num > 1000) {
@@ -56,6 +56,6 @@ const Product:React.FC<ProductProps> = React.memo(({item}) => {
             </section>
         </Link>
     )
-});
+};
 
 export default Product

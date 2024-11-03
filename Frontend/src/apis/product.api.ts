@@ -2,7 +2,7 @@ import { ProductListConfig, ProductList, Product} from "../types/products.type";
 import httpProduct from "../utils/httpProduct";
 import { SuccessResponse } from "../types/utils.type";
 
-const URL = `/products`;
+const URL = `products`;
 
 // const limit = 15
 // const productsAPI = {
@@ -25,14 +25,14 @@ const URL = `/products`;
 
 const productsAPI = {
   getProducts(params: ProductListConfig) {
-    return httpProduct.get<SuccessResponse<ProductList>>(URL, {
-      params
+    return httpProduct.get<SuccessResponse<ProductList>>(URL, { params }).then((response) => {
+      return response.data
     })
   },
 
   getProductDetail(id: string) {
     return httpProduct.get<SuccessResponse<Product>>(`${URL}/${id}`)
-  }
+  },
 }
 
 
