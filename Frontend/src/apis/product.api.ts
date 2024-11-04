@@ -19,7 +19,6 @@ const URL = `products`;
 //   getProductsDetail:  async (id: string) => {
 //     return httpProduct.get(`${URL}/${id}`)
 //  }
-
 // }
 
 

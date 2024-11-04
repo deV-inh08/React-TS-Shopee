@@ -25,7 +25,7 @@ function RejectRouted() {
 export const useRouteElements = () => {
     const routeElements = useRoutes([
         {
-            path: '/products',
+            path: '/',
             index: true, 
             element: (
                 <MainLayout>

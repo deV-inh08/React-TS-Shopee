@@ -1,21 +1,30 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query';
 import AsideFilter from '../../components/AsideFilter';
 import SortProductList from '../../components/SortProductList';
 import {HashLoader} from "react-spinners"
-import { useQueryParams } from "use-query-params"
+// import { useQueryParams } from "use-query-params"
 import productsAPI from '../../apis/product.api';
 import { ProductListConfig, Product as ProductType } from '../../types/products.type';
 import Product from '../../components/Product';
-import { omitBy, isUndefined } from 'lodash';
+// import { omitBy, isUndefined } from 'lodash';
 import Pagination from '../../components/Pagination/Pagination';
+import { useLocation } from 'react-router-dom';
 
 export type QueryConfig = {
   [key in keyof ProductListConfig]: string
 }
 
 const ProductList = () => {
-  let TOTALPAGE;
+  const [queryConfig, setQueryConfig] = useState<QueryConfig>({
+    skip: '0',
+    limit: '15',
+    // sortBy: undefined,
+    // order: undefined,
+    // rating: undefined,
+    // title: undefined,
+  })
+  const location = useLocation();
 
   // const [getProducts, setGetProducts] = useState<ProductProps>({
   //   products: [],
@@ -25,38 +34,36 @@ const ProductList = () => {
   // const [isLoading, setIsLoading] = useState<boolean>(false)
   // const {products, total, limit} = getProducts
   // const totalPages = Math.ceil(total / limit)
-
-  const queryParams: QueryConfig = useQueryParams()
-  const queryConfig: QueryConfig = omitBy({
-    skip: queryParams.skip || "0",
-    limit: queryParams.limit || "15",
-    sortBy: queryParams.sortBy,
-    order: queryParams.order,
-    rating: queryParams.rating,
-    title: queryParams.title
-  }, isUndefined);
-
-  // const [query] = useQueryParams({
-  //   limit: NumberParam,
-  //   skip: NumberParam,
-  // }) as ProductListConfig;
-
-
   
+
+  // const queryParams: QueryConfig = useQueryParams();
+  // const queryConfig: QueryConfig = omitBy({
+  //   skip: queryParams.skip || "0",
+  //   limit: queryParams.limit || "15",
+  //   sortBy: queryParams.sortBy,
+  //   order: queryParams.order,
+  //   rating: queryParams.rating,
+  //   title: queryParams.title
+  // }, isUndefined);
+
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    setQueryConfig({
+      skip: searchParams.get("skip") || "0",
+      limit: searchParams.get("limit") || "15",
+      // order: searchParams.get("order") || undefined,
+      // rating: searchParams.get("rating") || undefined,
+      // sortBy: searchParams.get("sortBy") || undefined,
+      // title: searchParams.get("title") || undefined,
+    })
+  },[location.search])
+
   const { data, isLoading } = useQuery({
     queryKey: ['/products', queryConfig],
-    queryFn: () => {
-      return productsAPI.getProducts(queryConfig) as ProductListConfig
-    }
+    queryFn: () => productsAPI.getProducts(queryConfig) as Promise<ProductListConfig>,
   });
-
-  console.log(queryConfig)
-
-  if(data && data.total && data.limit) {
-    TOTALPAGE = Math.ceil(data.total / data.limit)
-  };
-
-
+  const TOTALPAGE = data?.total && data?.limit ? Math.ceil(data.total / parseInt(data.limit)) : 0;
 
   // useEffect(() => {
   //       const loadingProducts = async () => {
@@ -91,7 +98,8 @@ const ProductList = () => {
           </div>
           <div className='col-span-9 '>
             <SortProductList></SortProductList>
-            {data && data.products && data.products.length > 0 ? (
+            {data && data.products && data.products.length > 0 
+              ? (
                 <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 items-stretch'>
                   {data.products.map((item: ProductType, index: number) => {
                     return (
@@ -101,9 +109,10 @@ const ProductList = () => {
                     );
                   })}
                 </div>
-              ) : (
+              ) 
+              : (
                 <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 items-stretch'>
-                  <div className='fixed z-50'>
+                  <div className='fixed z-50 left-[59%] top-[40%]'>
                         <HashLoader
                           loading={isLoading}
                           color='#f78012' // Màu cam
@@ -112,12 +121,17 @@ const ProductList = () => {
                   </div>
                 </div>
             )}
-            <article className='mx-auto'>
-              <Pagination
-                TOTALPAGE= {TOTALPAGE}
-                queryConfig= {queryConfig}
-              ></Pagination>
-            </article>
+            
+            {
+              data && data.products && data.products.length > 0 && (
+                <article className='mx-auto'>
+                  <Pagination
+                    TOTALPAGE= {TOTALPAGE}
+                    queryConfig= {queryConfig}
+                  ></Pagination>
+                </article>
+              )
+            }
           </div>
         </div>
       </div>
