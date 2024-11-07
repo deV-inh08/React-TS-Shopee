@@ -10,6 +10,7 @@ import Product from '../../components/Product';
 import Pagination from '../../components/Pagination/Pagination';
 import { useLocation } from 'react-router-dom';
 import { sort_by, order } from '../../constants/product';
+import categoriesApi from '../../apis/categories.api';
 
 export type QueryConfig = {
   [key in keyof ProductListConfig]: string
@@ -56,11 +57,18 @@ const ProductList = () => {
     })
   },[location.search])
 
-  const { data, isLoading } = useQuery({
+  const { data: productData, isLoading } = useQuery({
     queryKey: ['/products', queryConfig],
     queryFn: () => productsAPI.getProducts(queryConfig) as Promise<ProductListConfig>,
   });
-  const TOTALPAGE = data?.total && data?.limit ? Math.ceil(data.total / parseInt(data.limit)) : 0;
+  const TOTALPAGE = productData?.total && productData?.limit ? Math.ceil(productData.total / parseInt(productData.limit)) : 0;
+
+  const { data: categoriesData } = useQuery({
+    queryKey: ['/categories'],
+    queryFn: () => {
+      return categoriesApi.getCaregories()
+    }
+  });
 
   // useEffect(() => {
   //       const loadingProducts = async () => {
@@ -86,20 +94,22 @@ const ProductList = () => {
   //     setNextPage(1)
   //   }
   // };
-  
+
   return (
     <div className='bg-gray-200 py-6'>
       <div className='container'>
         <div className='grid grid-cols-12 gap-6'>
           <div className='col-span-3'>
-            <AsideFilter></AsideFilter>
+            {categoriesData && categoriesData.data && categoriesData.data.length > 0 && (
+              <AsideFilter categories={categoriesData?.data} queryConfig={queryConfig}></AsideFilter>
+            )}
           </div>
           <div className='col-span-9 '>
             <SortProductList queryConfig={queryConfig} TOTALPAGE={TOTALPAGE}></SortProductList>
-            {data && data.products && data.products.length > 0 
+            {productData && productData.products && productData.products.length > 0 
               ? (
                 <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 items-stretch'>
-                  {data.products.map((item: ProductType, index: number) => {
+                  {productData.products.map((item: ProductType, index: number) => {
                     return (
                       <div key={index} className='col-span-1'>
                         <Product item={item} />
@@ -121,7 +131,7 @@ const ProductList = () => {
             )}
             
             {
-              data && data.products && data.products.length > 0 && (
+              productData && productData.products && productData.products.length > 0 && (
                 <article className='mx-auto'>
                   <Pagination
                     TOTALPAGE= {TOTALPAGE}

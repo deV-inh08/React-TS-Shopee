@@ -1,10 +1,19 @@
-import { Link } from 'react-router-dom';
+import { createSearchParams, Link } from 'react-router-dom';
 import path from '../../constants/path';
 import Input from '../Input';
 import Button from '../Button';
+import { QueryConfig } from '../../pages/ProductList/ProductList';
+import { Categories } from '../../types/category.type';
+import classNames from 'classnames';
 
-const AsideFilter = () => {
-  return (
+interface Props {
+    categories: Categories[]
+    queryConfig: QueryConfig
+}
+
+const AsideFilter = ({ categories, queryConfig }: Props) => {
+    const {category} = queryConfig
+    return (
         <div className='py-4'>
             <Link to={path.home} className='flex items-center gap-x-5 font-bold'>
                 <svg 
@@ -25,27 +34,41 @@ const AsideFilter = () => {
             <div>
                 <div className='h-[1px] bg-gray-400 my-4' ></div>
                 <ul>
-                    <li className='pl-5 relative mt-3'>
-                        <Link to={path.home} className='flex text-orange items-center'>
-                            <svg 
-                                xmlns="http://www.w3.org/2000/svg" 
-                                fill="none" 
-                                viewBox="0 0 24 24" 
-                                strokeWidth="1.5" 
-                                stroke="currentColor"
-                                className="fill-orange h-2 w-2 absolute left-0">
-                                <path 
-                                    strokeLinecap="round" 
-                                    strokeLinejoin="round" 
-                                    d="m8.25 4.5 7.5 7.5-7.5 7.5" 
-                                />
-                            </svg>
-                            Thời trang nam
-                        </Link>
-                    </li>
-                    <li className='pl-5 mt-3'>
-                        Điện thoại
-                    </li>
+                    {categories.map((item, index) => {
+                        const isActive = category === item.name;
+                        return (
+                            <li key={index} className='pl-5 relative mt-3'>
+                                <Link 
+                                    to={{
+                                        pathname: path.home,
+                                        search: createSearchParams({
+                                            ...queryConfig,
+                                            category: item.slug
+                                        }).toString()
+                                    }} 
+                                    className={classNames('relative px-2', {
+                                    'flex text-orange items-center': isActive
+                                    })}>
+                                    {isActive && (
+                                        <svg 
+                                            xmlns="http://www.w3.org/2000/svg" 
+                                            fill="none" 
+                                            viewBox="0 0 24 24" 
+                                            strokeWidth="1.5" 
+                                            stroke="currentColor"
+                                            className="fill-orange h-2 w-2 absolute left-0">
+                                            <path 
+                                                strokeLinecap="round" 
+                                                strokeLinejoin="round" 
+                                                d="m8.25 4.5 7.5 7.5-7.5 7.5" 
+                                            />
+                                        </svg>
+                                    )}
+                                    {item.name}
+                                </Link>
+                        </li>
+                        )
+                    })}                   
                 </ul>
             </div>
 
