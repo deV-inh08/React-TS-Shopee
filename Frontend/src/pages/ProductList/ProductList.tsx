@@ -7,9 +7,9 @@ import {HashLoader} from "react-spinners"
 import productsAPI from '../../apis/product.api';
 import { ProductListConfig, Product as ProductType } from '../../types/products.type';
 import Product from '../../components/Product';
-// import { omitBy, isUndefined } from 'lodash';
 import Pagination from '../../components/Pagination/Pagination';
 import { useLocation } from 'react-router-dom';
+import { sort_by, order } from '../../constants/product';
 
 export type QueryConfig = {
   [key in keyof ProductListConfig]: string
@@ -19,12 +19,11 @@ const ProductList = () => {
   const [queryConfig, setQueryConfig] = useState<QueryConfig>({
     skip: '0',
     limit: '15',
-    // sortBy: undefined,
-    // order: undefined,
+    // sortBy: "rating",
+    // order: "desc",
     // rating: undefined,
     // title: undefined,
   })
-  const location = useLocation();
 
   // const [getProducts, setGetProducts] = useState<ProductProps>({
   //   products: [],
@@ -46,16 +45,14 @@ const ProductList = () => {
   //   title: queryParams.title
   // }, isUndefined);
 
-
+  const location = useLocation();
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     setQueryConfig({
       skip: searchParams.get("skip") || "0",
       limit: searchParams.get("limit") || "15",
-      // order: searchParams.get("order") || undefined,
-      // rating: searchParams.get("rating") || undefined,
-      // sortBy: searchParams.get("sortBy") || undefined,
-      // title: searchParams.get("title") || undefined,
+      sortBy: searchParams.get("sortBy") || sort_by.stock,
+      order: searchParams.get("order") || order.desc,
     })
   },[location.search])
 
@@ -89,6 +86,7 @@ const ProductList = () => {
   //     setNextPage(1)
   //   }
   // };
+  
   return (
     <div className='bg-gray-200 py-6'>
       <div className='container'>
@@ -97,7 +95,7 @@ const ProductList = () => {
             <AsideFilter></AsideFilter>
           </div>
           <div className='col-span-9 '>
-            <SortProductList></SortProductList>
+            <SortProductList queryConfig={queryConfig} TOTALPAGE={TOTALPAGE}></SortProductList>
             {data && data.products && data.products.length > 0 
               ? (
                 <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 items-stretch'>

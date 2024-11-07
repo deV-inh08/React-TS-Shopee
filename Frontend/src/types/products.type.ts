@@ -34,8 +34,7 @@ export interface ProductListConfig {
   skip?: number | 0
   limit?: number | 15
   order?: "asc" | "desc"
-  sortBy?: "title" | "price" | "rating" | "createdAt"
-  rating?: number
-  title?: string
+  sortBy?: "stock" | "price" | "rating"
+  category?: string
 }
 

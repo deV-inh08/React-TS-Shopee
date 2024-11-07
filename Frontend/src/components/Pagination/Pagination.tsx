@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { Link, createSearchParams} from "react-router-dom"
 import { QueryConfig } from "../../pages/ProductList/ProductList"
 import path from "../../constants/path"
@@ -9,11 +9,12 @@ interface NextPageProps {
   queryConfig: QueryConfig
 }
 
+
 const Pagination = ({queryConfig, TOTALPAGE}: NextPageProps) => {
 
-  useEffect(() => {
-    console.log("Query config update", queryConfig)
-  }, [queryConfig])
+  // useEffect(() => {
+  //   console.log("Query config update", queryConfig)
+  // }, [queryConfig])
   let page;
   if(queryConfig && queryConfig.limit && queryConfig.skip) {
     if(Number(queryConfig.skip / queryConfig.limit) == 0) {
@@ -24,7 +25,6 @@ const Pagination = ({queryConfig, TOTALPAGE}: NextPageProps) => {
   };
 
   const currentPage = Math.floor(parseInt(queryConfig.skip || "0") / parseInt(queryConfig.limit || "15")) + 1;
-  console.log(currentPage)
 
   const RANGE = 2;
   const renderPagination = () => {
@@ -50,7 +50,7 @@ const Pagination = ({queryConfig, TOTALPAGE}: NextPageProps) => {
           </span>
         )
       }
-      return null
+      return null 
     };
 
     return (
