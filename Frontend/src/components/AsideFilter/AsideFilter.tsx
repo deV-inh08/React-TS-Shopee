@@ -1,17 +1,18 @@
-import { createSearchParams, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import path from '../../constants/path';
 import Input from '../Input';
 import Button from '../Button';
-import { QueryConfig } from '../../pages/ProductList/ProductList';
 import { Categories } from '../../types/category.type';
+import { QueryConfig } from '../../pages/ProductList/ProductList';
 import classNames from 'classnames';
 
 interface Props {
     categories: Categories[]
     queryConfig: QueryConfig
+    onCategoryClick: (category: string) => void
 }
 
-const AsideFilter = ({ categories, queryConfig }: Props) => {
+const AsideFilter = ({ categories, queryConfig, onCategoryClick }: Props) => {
     const {category} = queryConfig
     return (
         <div className='py-4'>
@@ -35,22 +36,17 @@ const AsideFilter = ({ categories, queryConfig }: Props) => {
                 <div className='h-[1px] bg-gray-400 my-4' ></div>
                 <ul>
                     {categories.map((item, index) => {
-                        const isActive = category === item.name;
+                        const isActive = category === item.slug;
                         return (
-                            <li key={index} className='pl-5 relative mt-3'>
-                                <Link 
-                                    to={{
-                                        pathname: path.home,
-                                        search: createSearchParams({
-                                            ...queryConfig,
-                                            category: item.slug
-                                        }).toString()
-                                    }} 
-                                    className={classNames('relative px-2', {
-                                    'flex text-orange items-center': isActive
-                                    })}>
+                            <li key={index} className='pl-5 relative mt-3 cursor-pointer hover:text-gray-600'>
+                                <a 
+                                    className={classNames("relative px-2", {
+                                        "flex text-orange items-center": isActive
+                                    })}
+                                    onClick={() => onCategoryClick(item.slug)}
+                                    >
                                     {isActive && (
-                                        <svg 
+                                         <svg 
                                             xmlns="http://www.w3.org/2000/svg" 
                                             fill="none" 
                                             viewBox="0 0 24 24" 
@@ -65,7 +61,7 @@ const AsideFilter = ({ categories, queryConfig }: Props) => {
                                         </svg>
                                     )}
                                     {item.name}
-                                </Link>
+                                </a>
                         </li>
                         )
                     })}                   

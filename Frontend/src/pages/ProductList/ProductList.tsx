@@ -8,9 +8,9 @@ import productsAPI from '../../apis/product.api';
 import { ProductListConfig, Product as ProductType } from '../../types/products.type';
 import Product from '../../components/Product';
 import Pagination from '../../components/Pagination/Pagination';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { sort_by, order } from '../../constants/product';
-import categoriesApi from '../../apis/categories.api';
+import { skip } from 'node:test';
 
 export type QueryConfig = {
   [key in keyof ProductListConfig]: string
@@ -20,11 +20,9 @@ const ProductList = () => {
   const [queryConfig, setQueryConfig] = useState<QueryConfig>({
     skip: '0',
     limit: '15',
-    // sortBy: "rating",
-    // order: "desc",
-    // rating: undefined,
-    // title: undefined,
-  })
+    category: ''
+  });
+
 
   // const [getProducts, setGetProducts] = useState<ProductProps>({
   //   products: [],
@@ -54,21 +52,43 @@ const ProductList = () => {
       limit: searchParams.get("limit") || "15",
       sortBy: searchParams.get("sortBy") || sort_by.stock,
       order: searchParams.get("order") || order.desc,
+      category: searchParams.get("category") || ''
     })
   },[location.search])
 
   const { data: productData, isLoading } = useQuery({
     queryKey: ['/products', queryConfig],
-    queryFn: () => productsAPI.getProducts(queryConfig) as Promise<ProductListConfig>,
+    queryFn: () => {
+      if(queryConfig.category) {
+        return productsAPI.getProductsByCategory(queryConfig.category, queryConfig)
+      }
+      return productsAPI.getProducts(queryConfig) as Promise<ProductListConfig>
+    },
   });
   const TOTALPAGE = productData?.total && productData?.limit ? Math.ceil(productData.total / parseInt(productData.limit)) : 0;
 
-  const { data: categoriesData } = useQuery({
+  const {data: categoriesData} = useQuery({
     queryKey: ['/categories'],
     queryFn: () => {
-      return categoriesApi.getCaregories()
+      return productsAPI.getCategories()
     }
   });
+  const navigate = useNavigate();
+  const handleCategoryClick = (category: string) => {
+    setQueryConfig(prevConfig => {
+      const updatedConfig = {
+        ...prevConfig,
+        category: category,
+        skip: 0
+      };
+      navigate({
+        pathname: location.pathname,
+        search: `?category=${category}&skip=0&limit=${updatedConfig.limit}&sortBy=${updatedConfig.sortBy}&order=${updatedConfig.order}`,
+      });
+      return updatedConfig;
+    });
+  }
+
 
   // useEffect(() => {
   //       const loadingProducts = async () => {
@@ -101,7 +121,7 @@ const ProductList = () => {
         <div className='grid grid-cols-12 gap-6'>
           <div className='col-span-3'>
             {categoriesData && categoriesData.data && categoriesData.data.length > 0 && (
-              <AsideFilter categories={categoriesData?.data} queryConfig={queryConfig}></AsideFilter>
+              <AsideFilter categories={categoriesData?.data} queryConfig={queryConfig} onCategoryClick={handleCategoryClick}></AsideFilter>
             )}
           </div>
           <div className='col-span-9 '>
