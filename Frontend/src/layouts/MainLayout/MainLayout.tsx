@@ -10,7 +10,7 @@ const MainLayout = ({children}: Props) => {
   return (
     <div>
         <Header></Header>
-        {children}
+          {children}
         <Footer></Footer>
     </div>
   )

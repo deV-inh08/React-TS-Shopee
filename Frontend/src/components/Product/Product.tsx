@@ -18,7 +18,7 @@ const Product:React.FC<ProductProps> = ({item}) => {
       return num.toString()
     }
     return (
-        <Link to={path.home}>
+        <Link to={`${path.home}${item.id}`}>
             <section className='bg-white shadow rounded-sm hover:translate-y-[-0.0625rem] hover:shadow-md duration-100 transition-transform flex h-full justify-between flex-col'>
                 <figure className='w-full pt-[100%] relative'>
                     <img 
