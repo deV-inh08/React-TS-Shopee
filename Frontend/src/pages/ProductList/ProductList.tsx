@@ -3,14 +3,12 @@ import { useQuery } from '@tanstack/react-query';
 import AsideFilter from '../../components/AsideFilter';
 import SortProductList from '../../components/SortProductList';
 import {HashLoader} from "react-spinners"
-// import { useQueryParams } from "use-query-params"
 import productsAPI from '../../apis/product.api';
 import { ProductListConfig, Product as ProductType } from '../../types/products.type';
 import Product from '../../components/Product';
 import Pagination from '../../components/Pagination/Pagination';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { sort_by, order } from '../../constants/product';
-import { skip } from 'node:test';
 
 export type QueryConfig = {
   [key in keyof ProductListConfig]: string
@@ -20,7 +18,7 @@ const ProductList = () => {
   const [queryConfig, setQueryConfig] = useState<QueryConfig>({
     skip: '0',
     limit: '15',
-    category: ''
+    category: "",
   });
 
 
@@ -52,7 +50,7 @@ const ProductList = () => {
       limit: searchParams.get("limit") || "15",
       sortBy: searchParams.get("sortBy") || sort_by.stock,
       order: searchParams.get("order") || order.desc,
-      category: searchParams.get("category") || ''
+      category: searchParams.get("category") || '',
     })
   },[location.search])
 
@@ -65,6 +63,7 @@ const ProductList = () => {
       return productsAPI.getProducts(queryConfig) as Promise<ProductListConfig>
     },
   });
+
   const TOTALPAGE = productData?.total && productData?.limit ? Math.ceil(productData.total / parseInt(productData.limit)) : 0;
 
   const {data: categoriesData} = useQuery({
@@ -90,6 +89,19 @@ const ProductList = () => {
   }
 
 
+  // sort priceMin - priceMax
+  // const filterProductBtPrice = (products: ProductType[], price_min: number, price_max: number) => {
+  //   return products.filter((product) => {
+  //     const price = product.price;
+  //     return (price_min ? price_min < price : true) && (price_max ? price_max > price: true);
+  //   })
+  // }
+
+  // const filteredProducts = (queryConfig.price_min && queryConfig.price_max) 
+  //   ? filterProductBtPrice(productData.data || [], parseFloat(queryConfig.price_min), parseFloat(queryConfig.price_max))
+  //   : productData.data
+
+  // console.log(filteredProducts)
   // useEffect(() => {
   //       const loadingProducts = async () => {
   //         setIsLoading(true)

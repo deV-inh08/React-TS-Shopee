@@ -26,14 +26,14 @@ const Login = () => {
 
     const loginAccountMutation = useMutation({
         mutationFn: (body: Omit<FormData, "confirm_password">) => authAPI.loginAccount(body)
-    })
+    });
+
     const onSubmit = handleSubmit((data) => {
         loginAccountMutation.mutate(data, {
             onSuccess: (data) => {
                 setIsAuthenticated(true)
                 setProfile(data.data.data.user)
                 navigate("/")
-
             },
             onError: (errors) => {
                 if(isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(errors)) {

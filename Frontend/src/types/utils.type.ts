@@ -9,3 +9,8 @@ export interface ErrorResponse<Data> {
     data ?: Data
 }
 
+
+export type NoUndefinedField<T> = {
+    [P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>>
+}
+

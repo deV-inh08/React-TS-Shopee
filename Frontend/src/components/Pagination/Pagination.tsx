@@ -7,7 +7,7 @@ import classNames from "classnames"
 interface NextPageProps {
   TOTALPAGE: number
   queryConfig: QueryConfig
-}
+};
 
 
 const Pagination = ({queryConfig, TOTALPAGE}: NextPageProps) => {

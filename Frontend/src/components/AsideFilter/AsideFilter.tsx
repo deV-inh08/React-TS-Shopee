@@ -1,10 +1,16 @@
-import { Link } from 'react-router-dom';
+import { createSearchParams, Link, useNavigate } from 'react-router-dom';
 import path from '../../constants/path';
-import Input from '../Input';
+import InputNumber from '../InputNumber';
 import Button from '../Button';
 import { Categories } from '../../types/category.type';
 import { QueryConfig } from '../../pages/ProductList/ProductList';
 import classNames from 'classnames';
+import { useForm, Controller} from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Schema, schema } from '../../utils/rules';
+import { NoUndefinedField } from '../../types/utils.type';
+import { ObjectSchema } from 'yup';
+
 
 interface Props {
     categories: Categories[]
@@ -12,8 +18,30 @@ interface Props {
     onCategoryClick: (category: string) => void
 }
 
+type FormData = NoUndefinedField<Pick<Schema, "price_max" | "price_min">>
+
+const priceSchema = schema.pick(["price_min", "price_max"]);
+
 const AsideFilter = ({ categories, queryConfig, onCategoryClick }: Props) => {
-    const {category} = queryConfig
+    const {category} = queryConfig;
+    const {control, handleSubmit, watch, formState: { errors }} = useForm<FormData>({
+        defaultValues: {
+            price_min: "",
+            price_max: ""
+        },
+        resolver: yupResolver<FormData>(priceSchema as ObjectSchema<FormData>),
+        // default ==> True
+        shouldFocusError: false
+    });
+
+    const navigate = useNavigate();
+    
+    const valueForm = watch();
+    const onSubmit = handleSubmit((data) => {
+        console.log(data)
+        }
+    );
+
     return (
         <div className='py-4'>
             <Link to={path.home} className='flex items-center gap-x-5 font-bold'>
@@ -88,25 +116,54 @@ const AsideFilter = ({ categories, queryConfig, onCategoryClick }: Props) => {
                 <div className='h-[1px] bg-gray-400 my-4' ></div>
                 <div>
                     <p>Khoảng giá</p>
-                    <form action="" className='mt-2'>
+                    <form action="" className='mt-2' onSubmit={onSubmit}>
                             <div className='flex items-start'>
-                                <Input
-                                    type='text'
-                                    className='grow'
-                                    name='form'
-                                    classNameInput='px-1 py-1 text-sm border-gray-300 w-full outline-none focus:border-gray-500 rounded-sm focus:shadow-sm'    
+                                <Controller
+                                    control={control}
+                                    name='price_min'
+                                    render={({field}) => {
+                                        return (
+                                            <InputNumber
+                                                type='text'
+                                                className='grow'
+                                                classNameError='hidden'
+                                                name='form'
+                                                placeholder='₫ TỪ'
+                                                classNameInput='px-1 py-1 text-sm border-gray-300 w-full outline-none focus:border-gray-500 rounded-sm focus:shadow-sm'
+                                                onChange={field.onChange}
+                                                value={field.value}   
+                                                ref={field.ref} 
+                                            >
+                                            </InputNumber>
+                                        )
+                                    }}
                                 >
-                                </Input>
+                                </Controller>
+                               
                                 <span className='mx-2 mt-2 shrink-0'>--</span>
-                                <Input
-                                    type='text'
-                                    className='grow'
-                                    name='form'
-                                    placeholder='₫ ĐẾN'
-                                    classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
+                                <Controller
+                                    control={control}
+                                    name='price_max'
+                                    render={({field}) => {
+                                        return (
+                                            <InputNumber
+                                            type='text'
+                                            className='grow'
+                                            classNameError='hidden'
+                                            name='form'
+                                            placeholder='₫ ĐẾN'
+                                            classNameInput='px-1 py-1 text-sm border-gray-300 w-full outline-none focus:border-gray-500 rounded-sm focus:shadow-sm'
+                                            onChange={field.onChange}
+                                            value={field.value}
+                                            ref={field.ref}    
+                                        >
+                                        </InputNumber>
+                                        )
+                                    }}
                                 >
-                                </Input>
+                                </Controller>
                             </div>
+                            <div className='mt-1 text-red-600 min-h-[1.25rem] text-sm text-center'>{errors.price_min?.message}</div>
                             <Button className='bg-orange w-full p-2 text-white text-md hover:bg-orange/80 flex items-center justify-center'>Áp dụng</Button>
                         </form>
                 </div>
