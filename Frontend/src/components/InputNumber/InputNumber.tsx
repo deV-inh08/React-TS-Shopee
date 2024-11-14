@@ -1,7 +1,7 @@
 import React, { forwardRef, InputHTMLAttributes } from 'react'
 import type { UseFormRegister, RegisterOptions } from 'react-hook-form'
 
-interface Props extends InputHTMLAttributes<HTMLInputElement>{
+export interface InputNumberProps extends InputHTMLAttributes<HTMLInputElement>{
     errorMessage ?: string
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     register ?: UseFormRegister<any>
@@ -10,7 +10,7 @@ interface Props extends InputHTMLAttributes<HTMLInputElement>{
     classNameError ?: string
 }
 
-const InputNumber = forwardRef<HTMLInputElement, Props>(function InputNumberInner(
+const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function InputNumberInner(
                 {
                   errorMessage, 
                   className, 

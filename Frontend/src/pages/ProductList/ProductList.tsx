@@ -48,6 +48,7 @@ const ProductList = () => {
       }
       return productsAPI.getProducts(queryConfig) as Promise<ProductListConfig>
     },
+    staleTime: 3 * 60 * 1000
   });
 
   const TOTALPAGE = productData?.total && productData?.limit ? Math.ceil(productData.total / parseInt(productData.limit)) : 0;
@@ -87,45 +88,6 @@ const ProductList = () => {
     });
   };
 
-
-  // sort priceMin - priceMax
-  // const filterProductBtPrice = (products: ProductType[], price_min: number, price_max: number) => {
-  //   return products.filter((product) => {
-  //     const price = product.price;
-  //     return (price_min ? price_min < price : true) && (price_max ? price_max > price: true);
-  //   })
-  // }
-
-  // const filteredProducts = (queryConfig.price_min && queryConfig.price_max) 
-  //   ? filterProductBtPrice(productData.data || [], parseFloat(queryConfig.price_min), parseFloat(queryConfig.price_max))
-  //   : productData.data
-
-  // console.log(filteredProducts)
-  // useEffect(() => {
-  //       const loadingProducts = async () => {
-  //         setIsLoading(true)
-  //           try {
-  //               const data = await productsAPI.getProducts(nextPage);
-  //               if(JSON.stringify(data) !== JSON.stringify(getProducts)) {
-  //                 return setGetProducts(data)
-  //               }
-  //           } catch(error) {
-  //               console.log("Failed to load products", error)
-  //           } finally {
-  //             setIsLoading(false)
-  //           }
-  //       } 
-  //       loadingProducts()
-  // }, [nextPage]);
-
-  // const handlePageChange = (newPage: number) => {
-  //   if(newPage <= TOTALPAGE) {
-  //     setNextPage(newPage)
-  //   } else {
-  //     setNextPage(1)
-  //   }
-  // };
-
   return (
     <div className='bg-gray-200 py-6'>
       <div className='container'>
@@ -143,7 +105,7 @@ const ProductList = () => {
                 placeholder='Free Ship Đơn Từ 0đ' 
                 onChange={handleSearch}
                 autoFocus // Gọi hàm tìm kiếm khi người dùng nhập
-                className='absolute flex flex-grow border-none bg-transparent top-[59px] left-[400px] w-[850px] px-3 py-2 text-black outline-none'
+                className='absolute flex flex-grow border-none bg-transparent top-[55px] xl:left-[540px] lg:left-[200px] md:left-[200px] sm:left-[100px] w-[850px] px-3 py-2 text-black outline-none'
               />
             </div>
             <SortProductList queryConfig={queryConfig} TOTALPAGE={TOTALPAGE}></SortProductList>
@@ -170,7 +132,6 @@ const ProductList = () => {
                   </div>
                 </div>
             )}
-            
             {
               productData && productData.products && productData.products.length > 0 && (
                 <article className='mx-auto'>

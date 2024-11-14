@@ -21,7 +21,7 @@ const productsAPI = {
     return httpProduct.get<SuccessResponse<CategoriesType>>("products/categories")
   },
 
-  getProductsByCategory(category: string, params: ProductListConfig) {
+  getProductsByCategory(category: string, params?: ProductListConfig) {
     return httpProduct.get<SuccessResponse<ProductList>>(`products/category/${category}`, { params }).then((respose) => {
       return respose.data
     })

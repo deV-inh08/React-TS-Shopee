@@ -1,20 +1,24 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import productsAPI from '../../apis/product.api';
 import ProductRating from '../../components/ProductRating';
 import { formatCurrency, formatNumberToSocialStyle } from '../../utils/utils';
 import { HashLoader } from "react-spinners"
-import InputNumber from '../../components/InputNumber';
+import { ProductList } from '../../types/products.type';
+import Product from '../../components/Product';
+import QuantityController from '../../components/QuantityController';
 
 
 const ProductDetail = () => {
+    const [ buyCount, setBuyCount ] = useState<number>(1)
     const { id } = useParams();
     const imgRef = useRef<HTMLImageElement>(null)
 
     const { data: productDetailData } = useQuery({
         queryKey: ['products', id],
-        queryFn: () => productsAPI.getProductDetail(id as string)
+        queryFn: () => productsAPI.getProductDetail(id as string),
+        staleTime: 3 * 60 * 1000
     });
 
     const handleZoom = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -38,6 +42,19 @@ const ProductDetail = () => {
     const handleRemoveZoom = () => {
         imgRef.current?.removeAttribute("style")
     }
+
+    const queryConfig = {category: productDetailData?.data.category as string};
+    const { data: productsData } = useQuery({
+        queryKey: ['products', queryConfig],
+        queryFn: () => {
+            return productsAPI.getProductsByCategory(queryConfig.category as ProductList)
+        }
+    });
+
+    const handleBuyCount = (value: number) => {
+        setBuyCount(value)
+    };
+
 
 
     return (
@@ -116,22 +133,10 @@ const ProductDetail = () => {
                                         </div>
                                     </div>
                                     <div className='mt-8 flex items-center'>
-                                        <p className='capitalize text-gray-500'>
-                                            Số lượng
+                                        <p className='capitalize text-gray-500 mr-4'>
+                                            Số lượng:
                                         </p>
-                                        <div className='ml-10 flex items-center'>
-                                            <button className='flex h-8 w-8 items-center justify-center rounded-l-sm border border-gray-300 text-gray-600'>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-4">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
-                                                </svg>
-                                            </button>
-                                            <InputNumber value={1} className='' classNameError='hidden' classNameInput='h-8 w-14 border-t border-b border-gray-300 text-center outline-none'></InputNumber>
-                                            <button className='flex h-8 w-8 items-center justify-center rounded-l-sm border border-gray-300 text-gray-600'>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                                </svg>
-                                            </button>
-                                        </div>
+                                        <QuantityController onDecrease={handleBuyCount} onIncrease={handleBuyCount} onType={handleBuyCount} value={buyCount} max={productDetailData.stock}></QuantityController>
                                         <div className='ml-6 text-sm text-gray-500'>{productDetailData.data.stock} Sản phẩm có sẵn</div>
                                     </div>
                                     <div className='mt-8 flex items-center'>
@@ -174,7 +179,28 @@ const ProductDetail = () => {
                                 <p className='mt-3'>
                                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas quae, accusamus ea sapiente rerum quam iste dolore ut! Enim, voluptatum. Deserunt iusto omnis enim aliquam illo odit, fugit veniam praesentium debitis maiores, culpa incidunt ea voluptate! Mollitia cupiditate veritatis fugit. Ipsam, quas. Numquam quidem praesentium, molestiae corporis ea quia hic corrupti quaerat, minus itaque adipisci quis tempore dolor enim pariatur quam, aut illum sapiente ab. Esse vitae similique tempora odit.
                                 </p>
+
+                                <p className='mt-3'>
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quam ipsum doloremque eos corrupti, ullam at delectus rem voluptate sit odio, labore quidem veritatis nihil aperiam quo similique tempore quae ipsa odit accusantium praesentium! Sapiente ipsam sequi enim, ullam assumenda voluptatem, nulla consequuntur hic, pariatur mollitia eius ut perspiciatis ratione. Repellat aut, assumenda sequi ratione illo optio architecto. Debitis sint error commodi sunt repellendus soluta illo officia praesentium, esse qui quia.
+                                </p>
                             </div>
+                        </div>
+                    </div>
+                    <div className='mt-8'>
+                        <div className='container'>
+                            <h5 className='text-gray-600 uppercase'>Sản phẩm có liên quan</h5>
+                            {productsData && productsData?.products && (
+                                <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6'>
+                                    {productsData.products.map((item, index) => {
+                                        console.log(item)
+                                        return (
+                                            <div className='col-span-1' key={index}>
+                                                <Product item={item}></Product>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </>
