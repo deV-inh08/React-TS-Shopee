@@ -36,5 +36,6 @@ export interface ProductListConfig {
   order?: "asc" | "desc"
   sortBy?: "stock" | "price" | "rating"
   category?: string
+  search?: string;
 }
 

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import productsAPI from '../../apis/product.api';

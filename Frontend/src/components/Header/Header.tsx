@@ -1,24 +1,63 @@
-import { Link } from 'react-router-dom'
+import { createSearchParams, Link, useNavigate } from 'react-router-dom'
 import Popover from '../Popover'
 import { useMutation } from '@tanstack/react-query'
 import authAPI from '../../apis/auth.api'
 import { useContext } from 'react'
 import { AppContext } from '../../contexts/app.context'
 import path from '../../constants/path'
+import { useForm } from 'react-hook-form'
+import { schema, Schema } from '../../utils/rules'
+import { yupResolver } from '@hookform/resolvers/yup'
+import productsAPI from '../../apis/product.api'
+
+type FormData = Pick<Schema, "name">
+const nameSchema = schema.pick(["name"])
 
 const Header = () => {
     const {setIsAuthenticated, isAuthenticated, setProfile, profile} = useContext(AppContext);
+    const navigate = useNavigate();
+    const {register, handleSubmit} = useForm<FormData>({
+        defaultValues: {
+            name: ""
+        },
+        resolver: yupResolver(nameSchema)
+    });
     const logoutMutation = useMutation({
         mutationFn: authAPI.logout,
         onSuccess: () => {
             setProfile(null)
             setIsAuthenticated(false)
         }
-    })
+    });
+
+    
 
     const handleLogout = () => {
         logoutMutation.mutate()
-    }
+    };
+
+    const onSubmitSearch = handleSubmit(async (data) => {
+        const { name } = data;
+        const searchParams = createSearchParams({
+            q: name
+        })
+        
+        navigate({
+            pathname: path.home,
+            search: searchParams.toString()
+        })
+
+        try {
+            const result = await productsAPI.searchProduct(name);
+            console.log(result)
+        } catch(err) {
+            console.log(err)
+        }
+    })
+
+   
+
+ 
     return (
         <div className='pb-5 pt-2 bg-orange text-white'>
             <div className='container'>
@@ -71,13 +110,6 @@ const Header = () => {
                             </Link>
                         </div>
                     )}
-
-                    {/* <div >
-                        <div className='w-6 h-6 mr-2 flex-shrink-0'>
-                        <img className='w-full h-full object-cover rounded-full' src="https://plus.unsplash.com/premium_photo-1728579090264-5ba3706a5652?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw2fHx8ZW58MHx8fHx8" alt="avatar" />
-                        </div>
-                        <p className='text-white'>TDVinh</p>
-                    </div> */}
                 </div>
 
                 <div className='grid grid-cols-12 gap-4 items-end mt-3'>
@@ -88,9 +120,10 @@ const Header = () => {
                             </g>
                         </svg>
                     </Link>
-                    <form action="" className='col-span-9'>
+                    <form onSubmit={onSubmitSearch} action="" className='col-span-9'>
                         <div className='flex rounded-sm bg-white p-1'>
-                            <input type="text" name='search' placeholder='Free Ship Đơn Từ 0đ'  className='flex-grow border-none bg-transparent px-3 py-2 text-black outline-none'/>
+                            {/* <input {...register("name")} type="text" className='flex-grow border-none bg-transparent px-3 py-2 text-black outline-none'/> */}
+                            <span className='flex-grow border-none bg-transparent px-3 py-2 text-black outline-none'></span>
                             <button className='px-6 py-2 hover:opacity-90 rounded-sm flex-shrink-0 bg-orange'>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />

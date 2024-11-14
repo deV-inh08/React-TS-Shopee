@@ -18,29 +18,11 @@ const ProductList = () => {
   const [queryConfig, setQueryConfig] = useState<QueryConfig>({
     skip: '0',
     limit: '15',
-    category: "",
+    search: "",
   });
 
+  const [searchTerm, setSeachTerm] = useState<string>("");
 
-  // const [getProducts, setGetProducts] = useState<ProductProps>({
-  //   products: [],
-  //   total: 0,
-  //   limit: 15
-  // });
-  // const [isLoading, setIsLoading] = useState<boolean>(false)
-  // const {products, total, limit} = getProducts
-  // const totalPages = Math.ceil(total / limit)
-  
-
-  // const queryParams: QueryConfig = useQueryParams();
-  // const queryConfig: QueryConfig = omitBy({
-  //   skip: queryParams.skip || "0",
-  //   limit: queryParams.limit || "15",
-  //   sortBy: queryParams.sortBy,
-  //   order: queryParams.order,
-  //   rating: queryParams.rating,
-  //   title: queryParams.title
-  // }, isUndefined);
 
   const location = useLocation();
   useEffect(() => {
@@ -51,7 +33,9 @@ const ProductList = () => {
       sortBy: searchParams.get("sortBy") || sort_by.stock,
       order: searchParams.get("order") || order.desc,
       category: searchParams.get("category") || '',
+      search: searchParams.get("search") || '',
     })
+    setSeachTerm(searchParams.get("search") || "")
   },[location.search])
 
   const { data: productData, isLoading } = useQuery({
@@ -59,6 +43,8 @@ const ProductList = () => {
     queryFn: () => {
       if(queryConfig.category) {
         return productsAPI.getProductsByCategory(queryConfig.category, queryConfig)
+      } else if(queryConfig.search) {
+        return productsAPI.searchProduct(queryConfig.search, queryConfig)
       }
       return productsAPI.getProducts(queryConfig) as Promise<ProductListConfig>
     },
@@ -87,6 +73,19 @@ const ProductList = () => {
       return updatedConfig;
     });
   }
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSeachTerm(query); // Cập nhật state tìm kiếm
+    setQueryConfig(prevConfig => {
+      const updatedConfig = { ...prevConfig, search: query, skip: '0' };
+      navigate({
+        pathname: location.pathname,
+        search: `?search=${query}&skip=0&limit=${updatedConfig.limit}&sortBy=${updatedConfig.sortBy}&order=${updatedConfig.order}&category=${updatedConfig.category}`,
+      });
+      return updatedConfig;
+    });
+  };
 
 
   // sort priceMin - priceMax
@@ -137,6 +136,16 @@ const ProductList = () => {
             )}
           </div>
           <div className='col-span-9 '>
+            <div className="mb-4 ">
+              <input
+                type="text"
+                value={searchTerm}
+                placeholder='Free Ship Đơn Từ 0đ' 
+                onChange={handleSearch}
+                autoFocus // Gọi hàm tìm kiếm khi người dùng nhập
+                className='absolute flex flex-grow border-none bg-transparent top-[59px] left-[400px] w-[850px] px-3 py-2 text-black outline-none'
+              />
+            </div>
             <SortProductList queryConfig={queryConfig} TOTALPAGE={TOTALPAGE}></SortProductList>
             {productData && productData.products && productData.products.length > 0 
               ? (
