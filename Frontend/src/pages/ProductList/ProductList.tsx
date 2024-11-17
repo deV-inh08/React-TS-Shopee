@@ -12,7 +12,7 @@ import { sort_by, order } from '../../constants/product';
 
 export type QueryConfig = {
   [key in keyof ProductListConfig]: string
-}
+};
 
 const ProductList = () => {
   const [queryConfig, setQueryConfig] = useState<QueryConfig>({
@@ -22,7 +22,6 @@ const ProductList = () => {
   });
 
   const [searchTerm, setSeachTerm] = useState<string>("");
-
 
   const location = useLocation();
   useEffect(() => {
@@ -59,7 +58,9 @@ const ProductList = () => {
       return productsAPI.getCategories()
     }
   });
+
   const navigate = useNavigate();
+
   const handleCategoryClick = (category: string) => {
     setQueryConfig(prevConfig => {
       const updatedConfig = {
@@ -73,7 +74,7 @@ const ProductList = () => {
       });
       return updatedConfig;
     });
-  }
+  };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;

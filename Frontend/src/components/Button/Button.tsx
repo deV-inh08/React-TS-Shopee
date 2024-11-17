@@ -2,8 +2,7 @@ import React, { ButtonHTMLAttributes } from 'react'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     isLoading ?: boolean;
-
-}
+};
 
 const Button = (props: ButtonProps) => {
     const {className, isLoading, disabled, children, ...rest} = props;

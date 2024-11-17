@@ -2,13 +2,15 @@ import { createSearchParams, Link, useNavigate } from 'react-router-dom'
 import Popover from '../Popover'
 import { useMutation } from '@tanstack/react-query'
 import authAPI from '../../apis/auth.api'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../contexts/app.context'
 import path from '../../constants/path'
 import { useForm } from 'react-hook-form'
 import { schema, Schema } from '../../utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
 import productsAPI from '../../apis/product.api'
+import { CartItem } from '../../types/cartItem.type'
+import { formatCurrency } from '../../utils/utils'
 
 type FormData = Pick<Schema, "name">
 const nameSchema = schema.pick(["name"])
@@ -16,12 +18,19 @@ const nameSchema = schema.pick(["name"])
 const Header = () => {
     const {setIsAuthenticated, isAuthenticated, setProfile, profile} = useContext(AppContext);
     const navigate = useNavigate();
+    const [getCartInLocalStored, setGetCartInLocalStored] = useState<CartItem[]>([])
+
     const {register, handleSubmit} = useForm<FormData>({
         defaultValues: {
             name: ""
         },
         resolver: yupResolver(nameSchema)
     });
+
+    useEffect(() => {
+        setGetCartInLocalStored(JSON.parse(localStorage.getItem('cartItems')))
+    }, []);
+    
     const logoutMutation = useMutation({
         mutationFn: authAPI.logout,
         onSuccess: () => {
@@ -29,8 +38,6 @@ const Header = () => {
             setIsAuthenticated(false)
         }
     });
-
-    
 
     const handleLogout = () => {
         logoutMutation.mutate()
@@ -40,23 +47,18 @@ const Header = () => {
         const { name } = data;
         const searchParams = createSearchParams({
             q: name
-        })
-        
+        });
         navigate({
             pathname: path.home,
             search: searchParams.toString()
-        })
-
+        });
         try {
             const result = await productsAPI.searchProduct(name);
             console.log(result)
         } catch(err) {
             console.log(err)
         }
-    })
-
-   
-
+    });
  
     return (
         <div className='pb-5 pt-2 bg-orange text-white'>
@@ -142,82 +144,28 @@ const Header = () => {
 
                                     {/* products cart */}
                                     <div className='mt-5'>
-                                        <div className='mt-4 flex'>
-                                            <div className='flex-shrink-0'>
-                                                <img className='w-11 h-11 object-cover' src="https://down-vn.img.susercontent.com/file/vn-11134201-7r98o-lv15t0idibnq45_tn" alt="image" />
-                                            </div>
-                                            <div className='flex-grow ml-2 overflow-hidden'>
-                                                <div className='truncate'>
-                                                    [LIFECMBP2 - 12% đơn 250K] Áo Tanktop Nam Body
+                                        {getCartInLocalStored && getCartInLocalStored.map((item) => {
+                                            console.log(item)
+                                            return (
+                                                <div key={item.id} className='mt-4 flex'>
+                                                    <div className='flex-shrink-0'>
+                                                        <img className='w-11 h-11 object-cover' src={item.thumbnail} alt="image" />
+                                                    </div>
+                                                    <div className='flex-grow ml-2 overflow-hidden'>
+                                                        <div className='truncate'>
+                                                            {item.title.toUpperCase()}
+                                                        </div>
+                                                        <span className='text-sm text-gray-400'>x{item.quantity}</span>
+                                                    </div>
+                                                    <div className='ml-2 flex-shrink-0'>
+                                                        <span className='text-orange'>{formatCurrency((item.price * 24 * item.quantity))}₫</span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className='ml-2 flex-shrink-0'>
-                                                <span className='text-orange'>250.000</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className='mt-5'>
-                                        <div className='mt-4 flex'>
-                                            <div className='flex-shrink-0'>
-                                                <img className='w-11 h-11 object-cover' src="https://down-vn.img.susercontent.com/file/vn-11134201-7r98o-lv15t0idibnq45_tn" alt="image" />
-                                            </div>
-                                            <div className='flex-grow ml-2 overflow-hidden'>
-                                                <div className='truncate'>
-                                                    [LIFECMBP2 - 12% đơn 250K] Áo Tanktop Nam Body
-                                                </div>
-                                            </div>
-                                            <div className='ml-2 flex-shrink-0'>
-                                                <span className='text-orange'>250.000</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className='mt-5'>
-                                        <div className='mt-4 flex'>
-                                            <div className='flex-shrink-0'>
-                                                <img className='w-11 h-11 object-cover' src="https://down-vn.img.susercontent.com/file/vn-11134201-7r98o-lv15t0idibnq45_tn" alt="image" />
-                                            </div>
-                                            <div className='flex-grow ml-2 overflow-hidden'>
-                                                <div className='truncate'>
-                                                    [LIFECMBP2 - 12% đơn 250K] Áo Tanktop Nam Body
-                                                </div>
-                                            </div>
-                                            <div className='ml-2 flex-shrink-0'>
-                                                <span className='text-orange'>250.000</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className='mt-5'>
-                                        <div className='mt-4 flex'>
-                                            <div className='flex-shrink-0'>
-                                                <img className='w-11 h-11 object-cover' src="https://down-vn.img.susercontent.com/file/vn-11134201-7r98o-lv15t0idibnq45_tn" alt="image" />
-                                            </div>
-                                            <div className='flex-grow ml-2 overflow-hidden'>
-                                                <div className='truncate'>
-                                                    [LIFECMBP2 - 12% đơn 250K] Áo Tanktop Nam Body
-                                                </div>
-                                            </div>
-                                            <div className='ml-2 flex-shrink-0'>
-                                                <span className='text-orange'>250.000</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className='mt-5'>
-                                        <div className='mt-4 flex'>
-                                            <div className='flex-shrink-0'>
-                                                <img className='w-11 h-11 object-cover' src="https://down-vn.img.susercontent.com/file/vn-11134201-7r98o-lv15t0idibnq45_tn" alt="image" />
-                                            </div>
-                                            <div className='flex-grow ml-2 overflow-hidden'>
-                                                <div className='truncate'>
-                                                    [LIFECMBP2 - 12% đơn 250K] Áo Tanktop Nam Body
-                                                </div>
-                                            </div>
-                                            <div className='ml-2 flex-shrink-0'>
-                                                <span className='text-orange'>250.000</span>
-                                            </div>
-                                        </div>
+                                            )
+                                        })}
                                     </div>
                                     <div className='flex mt-6 items-center justify-between'>
-                                        <p className='capitalize text-xs text-gray-500'>Thêm vào giỏ hàng</p>
+                                        <p className='capitalize mr-3 text-xs text-gray-500'>Thêm vào giỏ hàng</p>
                                         <button type="button" className='capitalize bg-orange hover:bg-opacity-90 px-4 py-2 rounded-sm text-white'>Xem giỏ hàng</button>
                                     </div>
                                 </div>

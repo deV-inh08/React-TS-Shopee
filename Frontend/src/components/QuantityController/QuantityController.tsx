@@ -18,7 +18,6 @@ interface Props extends InputNumberProps {
         } else if(_value < 1) {
             _value = 1
         }
-
         onType && onType(_value)
     };
 

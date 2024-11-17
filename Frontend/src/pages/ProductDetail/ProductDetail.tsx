@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react'
-import { useQuery } from '@tanstack/react-query';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import productsAPI from '../../apis/product.api';
 import ProductRating from '../../components/ProductRating';
@@ -8,12 +8,79 @@ import { HashLoader } from "react-spinners"
 import { ProductList } from '../../types/products.type';
 import Product from '../../components/Product';
 import QuantityController from '../../components/QuantityController';
+import purchaseAPI from '../../apis/purchase.api';
+import USERID from '../../constants/user';
+import { CartItem } from '../../types/cartItem.type';
 
+
+const syncReactToLocal = (cartItems: CartItem[]) => {
+    localStorage.setItem("cartItems", JSON.stringify(cartItems))
+};
 
 const ProductDetail = () => {
-    const [ buyCount, setBuyCount ] = useState<number>(1)
+    const [ buyCount, setBuyCount ] = useState<number>(1);
     const { id } = useParams();
-    const imgRef = useRef<HTMLImageElement>(null)
+    const imgRef = useRef<HTMLImageElement>(null);
+    const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+    useLayoutEffect(() => {
+        const getCartItems = localStorage.getItem("cartItems");
+        const parseGetCartItem = JSON.parse(getCartItems || "[]");
+        setCartItems(parseGetCartItem)
+    }, []);
+
+    const addToCartMutation = useMutation({
+        mutationFn: purchaseAPI.addToCart,
+        onSuccess: async (data) => {
+            updatedCartItem(data.data.products[0]);
+        },
+        onError: (error) => { 
+            console.log("Error adding product to cart", error);
+            alert("Failed to add product to cart. Please try again");
+        }
+    });
+
+    // const updatedCartItem = (newItem: CartItem) => {
+    //     const existingItem = cartItems.find((item) => item.id === newItem.id);
+    //     if(existingItem) {
+    //         setCartItems(cartItems.map((item) => (
+    //             item.id === newItem.id 
+    //             ? {...item, quantity: item.quantity + newItem.quantity, total: item.price * (item.quantity + newItem.quantity)}
+    //             : item
+    //         )))
+    //     } else {
+    //         setCartItems([...cartItems, { ...newItem, quantity: buyCount, total: newItem.price * buyCount }]);
+    //         syncReactToLocal(() => [...cartItems, { ...newItem, quantity: buyCount, total: newItem.price * buyCount }])
+    //     }
+    // };
+
+    const updatedCartItem = (newItem: CartItem) => {
+        setCartItems((currentCart) => {
+            const existingItem = currentCart.find((item) => item.id === newItem.id);
+            let updatedCart;
+            if (existingItem) {
+                // Update quantity and total for existing item
+                updatedCart = currentCart.map((item) =>
+                    item.id === newItem.id
+                        ? {
+                              ...item,
+                              quantity: item.quantity + buyCount,
+                              total: item.price * (item.quantity + buyCount),
+                          }
+                        : item
+                );
+            } else {
+                // Add new item to the cart
+                updatedCart = [
+                    ...currentCart,
+                    { ...newItem, quantity: buyCount, total: newItem.price * buyCount },
+                ];
+            }
+            // Sync updated cart to localStorage
+            syncReactToLocal(updatedCart);
+            return updatedCart; // Return updated cart state
+        });
+    };
 
     const { data: productDetailData } = useQuery({
         queryKey: ['products', id],
@@ -24,9 +91,11 @@ const ProductDetail = () => {
     const handleZoom = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         const react = e.currentTarget.getBoundingClientRect();
         const image = imgRef.current as HTMLImageElement;
+
         let { naturalHeight, naturalWidth } = image;
         naturalWidth = naturalWidth + 400;
         naturalHeight = naturalHeight + 400;
+
         const {offsetX, offsetY} = e.nativeEvent;
         const top = offsetY * (1 - naturalHeight / react.height);
         const left = offsetX * (1 - naturalWidth / react.width);
@@ -41,7 +110,7 @@ const ProductDetail = () => {
 
     const handleRemoveZoom = () => {
         imgRef.current?.removeAttribute("style")
-    }
+    };
 
     const queryConfig = {category: productDetailData?.data.category as string};
     const { data: productsData } = useQuery({
@@ -55,7 +124,12 @@ const ProductDetail = () => {
         setBuyCount(value)
     };
 
-
+    const handleAddToCart = (userId: number) => {
+        addToCartMutation.mutate({
+            userId: userId,
+            products: [{ id: productDetailData?.data.id, quantity: buyCount}]
+        })
+    };
 
     return (
         <div className='bg-gray-200 py-6'>
@@ -140,7 +214,7 @@ const ProductDetail = () => {
                                         <div className='ml-6 text-sm text-gray-500'>{productDetailData.data.stock} Sản phẩm có sẵn</div>
                                     </div>
                                     <div className='mt-8 flex items-center'>
-                                        <button className='flex h-12 items-center justify-center rounded-sm border border-orange bg-orange/10 px-5 text-orange shadow-sm hover:bg-orange/5 '>
+                                        <button onClick={() => handleAddToCart(USERID)} className='flex h-12 items-center justify-center rounded-sm border border-orange bg-orange/10 px-5 text-orange shadow-sm hover:bg-orange/5 '>
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-4 mr-2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                                             </svg>
@@ -192,7 +266,6 @@ const ProductDetail = () => {
                             {productsData && productsData?.products && (
                                 <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6'>
                                     {productsData.products.map((item, index) => {
-                                        console.log(item)
                                         return (
                                             <div className='col-span-1' key={index}>
                                                 <Product item={item}></Product>

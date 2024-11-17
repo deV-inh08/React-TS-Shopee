@@ -6,7 +6,6 @@ interface Reviews {
   reviewerEmail: string
 }
 
-
 export interface Product {
   id: number;
   title: string
@@ -21,14 +20,12 @@ export interface Product {
   stock: number
 };
 
-
 export interface ProductList {
   products: Product[]
   total: number
   skip: number
   limit: number
 }
-
 
 export interface ProductListConfig {
   skip?: number | 0
@@ -37,5 +34,16 @@ export interface ProductListConfig {
   sortBy?: "stock" | "price" | "rating"
   category?: string
   search?: string;
+}
+
+export interface ProductAddToCart  {
+  id: number,
+  title: string
+  price: number,
+  quantity: number,
+  total: number,
+  discountPercentage: number,
+  discountedPrice: number
+  thumbnail: string
 }
 
