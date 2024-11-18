@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import path from '../../constants/path';
 import InputNumber from '../InputNumber';
 import Button from '../Button';
@@ -33,15 +33,14 @@ const AsideFilter = ({ categories, queryConfig, onCategoryClick }: Props) => {
         // default ==> True
         shouldFocusError: false
     });
-
-    const navigate = useNavigate();
     
     const valueForm = watch();
     const onSubmit = handleSubmit((data) => {
         console.log(data)
         }
     );
-
+    console.log(valueForm);
+    
     return (
         <div className='py-4'>
             <Link to={path.home} className='flex items-center gap-x-5 font-bold'>

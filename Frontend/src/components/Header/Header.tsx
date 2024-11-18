@@ -2,15 +2,16 @@ import { createSearchParams, Link, useNavigate } from 'react-router-dom'
 import Popover from '../Popover'
 import { useMutation } from '@tanstack/react-query'
 import authAPI from '../../apis/auth.api'
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import { AppContext } from '../../contexts/app.context'
 import path from '../../constants/path'
 import { useForm } from 'react-hook-form'
 import { schema, Schema } from '../../utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
 import productsAPI from '../../apis/product.api'
-import { CartItem } from '../../types/cartItem.type'
 import { formatCurrency } from '../../utils/utils'
+import { useCart } from '../../contexts/CartContext'
+
 
 type FormData = Pick<Schema, "name">
 const nameSchema = schema.pick(["name"])
@@ -18,18 +19,13 @@ const nameSchema = schema.pick(["name"])
 const Header = () => {
     const {setIsAuthenticated, isAuthenticated, setProfile, profile} = useContext(AppContext);
     const navigate = useNavigate();
-    const [getCartInLocalStored, setGetCartInLocalStored] = useState<CartItem[]>([])
-
+    const { cartItems } = useCart()
     const {register, handleSubmit} = useForm<FormData>({
         defaultValues: {
             name: ""
         },
         resolver: yupResolver(nameSchema)
     });
-
-    useEffect(() => {
-        setGetCartInLocalStored(JSON.parse(localStorage.getItem('cartItems')))
-    }, []);
     
     const logoutMutation = useMutation({
         mutationFn: authAPI.logout,
@@ -144,8 +140,8 @@ const Header = () => {
 
                                     {/* products cart */}
                                     <div className='mt-5'>
-                                        {getCartInLocalStored && getCartInLocalStored.map((item) => {
-                                            console.log(item)
+                                        {cartItems 
+                                            ? cartItems.map((item) => {
                                             return (
                                                 <div key={item.id} className='mt-4 flex'>
                                                     <div className='flex-shrink-0'>
@@ -162,7 +158,11 @@ const Header = () => {
                                                     </div>
                                                 </div>
                                             )
-                                        })}
+                                            })
+                                            : (
+                                                <p className='text-gray-500 font-bold text-sm mt-3'>Chưa có sản phẩm nào được thêm</p>
+                                            )
+                                        }
                                     </div>
                                     <div className='flex mt-6 items-center justify-between'>
                                         <p className='capitalize mr-3 text-xs text-gray-500'>Thêm vào giỏ hàng</p>

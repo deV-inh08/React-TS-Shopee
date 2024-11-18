@@ -27,7 +27,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         initialAppContext.isAuthenticated
     );
 
-    const [profile, setProfile] = useState<User | null>(initialAppContext.profile)
+    const [profile, setProfile] = useState<User | null>(initialAppContext.profile);
+
 
     // Passing state and function to context value
     const value = {

@@ -8,6 +8,7 @@ import {QueryClient, QueryClientProvider} from "@tanstack/react-query"
 import { AppProvider } from './contexts/app.context.tsx' 
 import { QueryParamProvider,  } from "use-query-params"
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
+import { CartProvider } from './contexts/CartContext.tsx'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,7 +24,9 @@ createRoot(document.getElementById('root')!).render(
     <QueryParamProvider adapter={ReactRouter6Adapter}>
       <QueryClientProvider client={queryClient}>
         <AppProvider>
-          <App />
+            <CartProvider>
+             <App />
+            </CartProvider>
         </AppProvider>
         <ReactQueryDevtools initialIsOpen={false}></ReactQueryDevtools>
       </QueryClientProvider>

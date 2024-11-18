@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import productsAPI from '../../apis/product.api';
@@ -11,6 +11,7 @@ import QuantityController from '../../components/QuantityController';
 import purchaseAPI from '../../apis/purchase.api';
 import USERID from '../../constants/user';
 import { CartItem } from '../../types/cartItem.type';
+import { useCart } from '../../contexts/CartContext';
 
 
 const syncReactToLocal = (cartItems: CartItem[]) => {
@@ -21,12 +22,15 @@ const ProductDetail = () => {
     const [ buyCount, setBuyCount ] = useState<number>(1);
     const { id } = useParams();
     const imgRef = useRef<HTMLImageElement>(null);
-    const [cartItems, setCartItems] = useState<CartItem[]>([]);
+    const { cartItems, setCartItems } = useCart()
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const getCartItems = localStorage.getItem("cartItems");
-        const parseGetCartItem = JSON.parse(getCartItems || "[]");
-        setCartItems(parseGetCartItem)
+        if(getCartItems) {
+            const parseGetCartItem = JSON.parse(getCartItems || "[]");
+            setCartItems(parseGetCartItem)
+        }
+       
     }, []);
 
     const addToCartMutation = useMutation({
@@ -40,20 +44,6 @@ const ProductDetail = () => {
         }
     });
 
-    // const updatedCartItem = (newItem: CartItem) => {
-    //     const existingItem = cartItems.find((item) => item.id === newItem.id);
-    //     if(existingItem) {
-    //         setCartItems(cartItems.map((item) => (
-    //             item.id === newItem.id 
-    //             ? {...item, quantity: item.quantity + newItem.quantity, total: item.price * (item.quantity + newItem.quantity)}
-    //             : item
-    //         )))
-    //     } else {
-    //         setCartItems([...cartItems, { ...newItem, quantity: buyCount, total: newItem.price * buyCount }]);
-    //         syncReactToLocal(() => [...cartItems, { ...newItem, quantity: buyCount, total: newItem.price * buyCount }])
-    //     }
-    // };
-
     const updatedCartItem = (newItem: CartItem) => {
         setCartItems((currentCart) => {
             const existingItem = currentCart.find((item) => item.id === newItem.id);
@@ -63,22 +53,20 @@ const ProductDetail = () => {
                 updatedCart = currentCart.map((item) =>
                     item.id === newItem.id
                         ? {
-                              ...item,
-                              quantity: item.quantity + buyCount,
-                              total: item.price * (item.quantity + buyCount),
+                            ...item,
+                            quantity: item.quantity + buyCount,
+                            total: item.price * (item.quantity + buyCount),
                           }
                         : item
                 );
             } else {
-                // Add new item to the cart
                 updatedCart = [
                     ...currentCart,
                     { ...newItem, quantity: buyCount, total: newItem.price * buyCount },
                 ];
             }
-            // Sync updated cart to localStorage
             syncReactToLocal(updatedCart);
-            return updatedCart; // Return updated cart state
+            return updatedCart;
         });
     };
 
