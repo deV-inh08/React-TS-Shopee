@@ -12,7 +12,8 @@ import purchaseAPI from '../../apis/purchase.api';
 import USERID from '../../constants/user';
 import { CartItem } from '../../types/cartItem.type';
 import { useCart } from '../../contexts/CartContext';
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const syncReactToLocal = (cartItems: CartItem[]) => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems))
@@ -113,10 +114,16 @@ const ProductDetail = () => {
     };
 
     const handleAddToCart = (userId: number) => {
-        addToCartMutation.mutate({
-            userId: userId,
-            products: [{ id: productDetailData?.data.id, quantity: buyCount}]
-        })
+            addToCartMutation.mutate({
+                userId: userId,
+                products: [{ id: productDetailData?.data.id, quantity: buyCount}]
+            },
+            {
+                onSuccess: () => {
+                    toast.success("Thêm vào giỏ hàng thành công", { autoClose: 1000 })
+                }
+            }
+        )
     };
 
     return (
@@ -265,12 +272,11 @@ const ProductDetail = () => {
                         </div>
                     </div>
                 </>
-                
             ) : 
                 <div className='fixed z-50 left-[50%] top-[40%]'>
                     <HashLoader
-                        color='#f78012' // Màu cam
-                        size={50} // Kích thước của loader (có thể tùy chỉnh)
+                        color='#f78012' 
+                        size={50}
                     />
                 </div>
             }
