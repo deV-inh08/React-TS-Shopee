@@ -11,22 +11,24 @@ import { isAxiosUnprocessableEntityError } from '../../utils/utils';
 import { ErrorResponse } from '../../types/utils.type';
 import { AppContext } from '../../contexts/app.context';
 import Button from '../../components/Button';
+import { toast } from 'react-toastify';
 
 
 type FormData = Pick<Schema, "email" | "password" | "confirm_password">
+const registerSchema = schema.pick(['email', 'password', 'confirm_password'])
 
 const Register = () => {
     const {setIsAuthenticated, setProfile} = useContext(AppContext)
     const navigate = useNavigate()
-    const {register, handleSubmit, formState: {errors}, getValues, setError} = useForm<FormData>(
+    const {register, handleSubmit, formState: {errors}, setError} = useForm<FormData>(
         {
-            resolver: yupResolver(schema)
+            resolver: yupResolver(registerSchema)
         }
     );
 
     const registerAccountMutation = useMutation({
         mutationFn: (body: Omit<FormData, "confirm_password">) => authAPI.registerAccount(body)
-    })
+    });
     
     const onSubmit = handleSubmit((data) => {
         const body = omit(data, ["confirm_password"])
@@ -35,6 +37,7 @@ const Register = () => {
                 setIsAuthenticated(true)
                 setProfile(data.data.data.user)
                 navigate("/")
+                toast("Đăng kí thành công", { autoClose: 1000 })
             },
             onError: (error) => {
                 if(isAxiosUnprocessableEntityError<ErrorResponse<Omit<FormData, "confirm_password">>>(error)) {
@@ -46,18 +49,10 @@ const Register = () => {
                                 type: "Server"
                             })
                         })
-                    }
-                    // Cach 2:
-                    // setError("email", {
-                    //     message: formError?.email,
-                    //     type: "Server"
-                    // }) 
+                    } 
                 }
             }
         })
-    }, () => {
-        const password = getValues("password")
-        console.log(password)
     });
     return (
         <div className='bg-orange'>
@@ -95,7 +90,8 @@ const Register = () => {
                             </Input>
                         
                             <div className='mt-3'>
-                                <Button 
+                                <Button
+                                    type='submit'
                                     className='flex justify-center items-center gap-4 hover:opacity-60 transition-all w-full mt-3 text-center py-4 px-2 uppercase bg-orange text-white text-lg'
                                     isLoading={registerAccountMutation.isPending}
                                     disabled={registerAccountMutation.isPending}

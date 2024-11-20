@@ -27,6 +27,8 @@ const Input = (
     <div className={className}>
         <input 
             className={classNameInput} 
+            placeholder={placeholder}
+            type={type}
             {...registerResult}
             {...rest}
         />

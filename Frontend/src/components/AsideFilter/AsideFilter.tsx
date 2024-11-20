@@ -11,7 +11,6 @@ import { Schema, schema } from '../../utils/rules';
 import { NoUndefinedField } from '../../types/utils.type';
 import { ObjectSchema } from 'yup';
 
-
 interface Props {
     categories: Categories[]
     queryConfig: QueryConfig
@@ -40,7 +39,7 @@ const AsideFilter = ({ categories, queryConfig, onCategoryClick }: Props) => {
         }
     );
     console.log(valueForm);
-    
+
     return (
         <div className='py-4'>
             <Link to={path.home} className='flex items-center gap-x-5 font-bold'>

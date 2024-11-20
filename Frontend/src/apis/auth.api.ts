@@ -17,7 +17,6 @@ const authAPI = {
   logout: () => {
     return http.post('/logout')
   }
-}
+};
 
-
-export default authAPI
+export default authAPI;

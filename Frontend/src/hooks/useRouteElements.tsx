@@ -10,6 +10,7 @@ import { useContext } from 'react'
 import { AppContext } from '../contexts/app.context'
 import path from '../constants/path'
 import ProductDetail from '../pages/ProductDetail'
+import Cart from '../components/Cart'
 
 
 
@@ -44,6 +45,14 @@ export const useRouteElements = () => {
                     element: (
                         <MainLayout>
                             <Profile />
+                        </MainLayout>
+                    )
+                },
+                {
+                    path: path.cart,
+                    element: (
+                        <MainLayout>
+                            <Cart />
                         </MainLayout>
                     )
                 }

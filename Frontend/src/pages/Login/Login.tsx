@@ -10,10 +10,11 @@ import Input from '../../components/Input';
 import { useContext } from 'react';
 import { AppContext } from '../../contexts/app.context';
 import Button from '../../components/Button';
+import { toast } from 'react-toastify';
 
 type FormData = Omit<Schema, "confirm_password">
 
-const loginSchema = schema.omit(["confirm_password"])
+const loginSchema = schema.pick(["email", "password"])
 
 const Login = () => {
     const {setIsAuthenticated, setProfile} = useContext(AppContext)
@@ -34,6 +35,7 @@ const Login = () => {
                 setIsAuthenticated(true)
                 setProfile(data.data.data.user)
                 navigate("/")
+                toast("Đăng nhập thành công", { autoClose: 1000 })
             },
             onError: (errors) => {
                 if(isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(errors)) {
@@ -55,7 +57,7 @@ const Login = () => {
             <div className="max-w-7xl mx-auto px-4 container">
                 <div className='grid grid-cols-1 py-12 lg:grid-cols-5 lg:py-32 lg:pr-10'>
                     <div className='lg:col-span-2 lg:col-start-4'>
-                        <form action="" className='p-10 rounded bg-white shadow-sm' autoComplete='off' method='post' onSubmit={onSubmit}>
+                        <form className='p-10 rounded bg-white shadow-sm' autoComplete='off' method='post' onSubmit={onSubmit} noValidate>
                             <p className='text-2xl'>Đăng nhập</p>
                             <Input
                                 name='email'
@@ -76,7 +78,7 @@ const Login = () => {
                                 >
                             </Input>
                             <div className='mt-3'>
-                                <Button 
+                                <Button
                                     type='submit'
                                     className='flex justify-center gap-4 items-center hover:opacity-60 transition-all w-full mt-3 text-center py-4 px-2 uppercase bg-orange text-white text-lg '
                                     isLoading={loginAccountMutation.isPending}

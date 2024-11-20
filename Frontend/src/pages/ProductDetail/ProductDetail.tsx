@@ -23,7 +23,7 @@ const ProductDetail = () => {
     const [ buyCount, setBuyCount ] = useState<number>(1);
     const { id } = useParams();
     const imgRef = useRef<HTMLImageElement>(null);
-    const { cartItems, setCartItems } = useCart()
+    const { setCartItems } = useCart()
 
     useEffect(() => {
         const getCartItems = localStorage.getItem("cartItems");
