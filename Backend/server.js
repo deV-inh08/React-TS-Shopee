@@ -1,16 +1,28 @@
 const express = require("express");
 const jwt = require("jsonwebtoken")
 const cors = require("cors") 
+const fs = require("fs");
 
 const app = express();
 const PORT = 3001;
 
+const readUsers = () => {
+    const data = fs.readFileSync("./users.json", "utf8")
+    return JSON.parse(data)
+};
+
+const writeUser = (users) => {
+    fs.writeFileSync("./users.json", JSON.stringify(users, null, 2));
+};
+
+let users = readUsers();
 
 app.use(express.json())
 app.use(cors())
 
-
-let users = [];
+app.get("/", (req, res) => {
+    res.send("Hello express")
+})
 
 // Route Register
 app.post("/register", (req, res) => {
@@ -28,11 +40,11 @@ app.post("/register", (req, res) => {
         id: users.length + 1,
         email,
         password,
-        roles: ["user"]
-    }
-
+        roles: "user"
+    };
     users.push(newUser);
-    console.log(users)
+
+    writeUser(users);
 
     const token = jwt.sign({email, roles: newUser.roles}, "secret_key", {expiresIn: "7d"})
     res.json({
@@ -42,8 +54,10 @@ app.post("/register", (req, res) => {
             expires: '7d',
             user: newUser
         }
-    })
-})
+    });
+    console.log(users);
+
+});
 
 // Route login
 app.post("/login", (req, res) => {
@@ -66,8 +80,7 @@ app.post("/login", (req, res) => {
             user
         }
     })
-})
-
+});
 
 // Middleware kiểm tra token
 const verifyToken = (req, res, next) => {
@@ -87,22 +100,6 @@ const verifyToken = (req, res, next) => {
             })
     }
 }
-
-
-// Route Read Me
-// app.get("/me",verifyToken, (req, res) => {
-//     const user = users.find((user) => user.email === req.user.email)
-//     if(!user) {
-//         return res.status(404).json({
-//             message: "User does not exist"
-//         })
-//     }
-//     res.json({
-//         message: "Get user success",
-//         data: user
-//     })
-// });
-
 
 // Route logout
 app.post("/logout",verifyToken, (req, res) => {

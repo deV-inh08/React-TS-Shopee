@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "email": "vintd2004@gmail.com",
+    "password": "12345677",
+    "roles": "user"
+  },
+  {
+    "id": 2,
+    "email": "abc123@gmail.com",
+    "password": "12345677",
+    "roles": "user"
+  },
+  {
+    "id": 3,
+    "email": "acb2004@gmail.com",
+    "password": "12345677",
+    "roles": "user"
+  }
+]
