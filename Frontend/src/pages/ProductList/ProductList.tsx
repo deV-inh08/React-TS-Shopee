@@ -24,8 +24,10 @@ const ProductList = () => {
   const [searchTerm, setSeachTerm] = useState<string>("");
 
   const location = useLocation();
+
+
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
+  const searchParams = new URLSearchParams(location.search);
     setQueryConfig({
       skip: searchParams.get("skip") || "0",
       limit: searchParams.get("limit") || "15",
@@ -76,18 +78,6 @@ const ProductList = () => {
     });
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSeachTerm(query); // Cập nhật state tìm kiếm
-    setQueryConfig(prevConfig => {
-      const updatedConfig = { ...prevConfig, search: query, skip: '0' };
-      navigate({
-        pathname: location.pathname,
-        search: `?search=${query}&skip=0&limit=${updatedConfig.limit}&sortBy=${updatedConfig.sortBy}&order=${updatedConfig.order}&category=${updatedConfig.category}`,
-      });
-      return updatedConfig;
-    });
-  };
 
   return (
     <div className='bg-gray-200 py-6'>
@@ -99,7 +89,7 @@ const ProductList = () => {
             )}
           </div>
           <div className='col-span-9 '>
-            <div className="mb-4 ">
+            {/* <div className="mb-4 ">
               <input
                 type="text"
                 value={searchTerm}
@@ -108,7 +98,7 @@ const ProductList = () => {
                 autoFocus // Gọi hàm tìm kiếm khi người dùng nhập
                 className='absolute flex flex-grow border-none bg-transparent top-[55px] xl:left-[540px] lg:left-[200px] md:left-[200px] sm:left-[100px] w-[850px] px-3 py-2 text-black outline-none'
               />
-            </div>
+            </div> */}
             <SortProductList queryConfig={queryConfig} TOTALPAGE={TOTALPAGE}></SortProductList>
             {productData && productData.products && productData.products.length > 0 
               ? (
@@ -127,8 +117,8 @@ const ProductList = () => {
                   <div className='fixed z-50 left-[59%] top-[40%]'>
                         <HashLoader
                           loading={isLoading}
-                          color='#f78012' // Màu cam
-                          size={50} // Kích thước của loader (có thể tùy chỉnh)
+                          color='#f78012' 
+                          size={50}
                         />
                   </div>
                 </div>

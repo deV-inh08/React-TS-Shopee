@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import productsAPI from '../../apis/product.api';
 import ProductRating from '../../components/ProductRating';
 import { formatCurrency, formatNumberToSocialStyle } from '../../utils/utils';
@@ -14,6 +14,7 @@ import { CartItem } from '../../types/cartItem.type';
 import { useCart } from '../../contexts/CartContext';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import path from '../../constants/path';
 
 const syncReactToLocal = (cartItems: CartItem[]) => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems))
@@ -24,6 +25,7 @@ const ProductDetail = () => {
     const { id } = useParams();
     const imgRef = useRef<HTMLImageElement>(null);
     const { setCartItems } = useCart()
+    const navigate = useNavigate();
 
     useEffect(() => {
         const getCartItems = localStorage.getItem("cartItems");
@@ -31,7 +33,6 @@ const ProductDetail = () => {
             const parseGetCartItem = JSON.parse(getCartItems || "[]");
             setCartItems(parseGetCartItem)
         }
-       
     }, []);
 
     const addToCartMutation = useMutation({
@@ -126,6 +127,16 @@ const ProductDetail = () => {
         )
     };
 
+    const buyNow = async (userId: number) => {
+        const res = await addToCartMutation.mutateAsync({ userId: userId ,products: [{ id: productDetailData?.data.id, quantity: buyCount }]});
+        const purchase = res.data.products[0]
+        navigate(path.cart, {
+            state: {
+                purchaseId: purchase.id
+            }
+        })
+    };
+
     return (
         <div className='bg-gray-200 py-6'>
             {productDetailData?.data ? (
@@ -215,7 +226,10 @@ const ProductDetail = () => {
                                             </svg>
                                             Thêm vào giỏ hàng
                                         </button>
-                                        <button className='ml-4 flex h-12 min-w-[5rem] items-center justify-center rounded-sm bg-orange px-6 capitalize text-white shadow-sm outline-none bg-orange/90'>
+                                        <button 
+                                            className='ml-4 flex h-12 min-w-[5rem] items-center justify-center rounded-sm bg-orange px-6 capitalize text-white shadow-sm outline-none bg-orange/90'
+                                            onClick={() => buyNow(USERID)}    
+                                        >
                                             Mua ngay
                                         </button>
                                     </div>

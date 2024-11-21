@@ -11,6 +11,7 @@ import { AppContext } from '../contexts/app.context'
 import path from '../constants/path'
 import ProductDetail from '../pages/ProductDetail'
 import Cart from '../components/Cart'
+import CartLayout from '../layouts/CartLayout'
 
 
 
@@ -51,9 +52,9 @@ export const useRouteElements = () => {
                 {
                     path: path.cart,
                     element: (
-                        <MainLayout>
-                            <Cart />
-                        </MainLayout>
+                        <CartLayout>
+                            <Cart/>
+                        </CartLayout>
                     )
                 }
             ]

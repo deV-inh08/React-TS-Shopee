@@ -1,6 +1,6 @@
 import { ProductAddToCart } from "./products.type";
 
-interface Purchase {
+export interface Purchase {
     id: number;
     products: ProductAddToCart[];
     total: number;
@@ -10,4 +10,7 @@ interface Purchase {
     totalQuantity: number;
 };
 
-export default Purchase;
+export interface ExtendedPurchase extends Purchase {
+    disable: boolean
+    checked: boolean
+}

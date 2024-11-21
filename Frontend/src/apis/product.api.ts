@@ -27,8 +27,9 @@ const productsAPI = {
     })
   },
 
-  searchProduct(query: string) {
-    return httpProduct.get<SuccessResponse<ProductList>>(`products/search?q=${query}`).then((response) => {
+  searchProduct(search: string) {
+    return httpProduct.get<SuccessResponse<ProductList>>(`products/search?q=${search}`, {
+    }).then((response) => {
       return response.data;
     })
   }

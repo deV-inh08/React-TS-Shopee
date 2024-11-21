@@ -9,7 +9,6 @@ import { omit } from 'lodash'
 
 interface Props {
     queryConfig: QueryConfig,
-    // TOTALPAGE: number
 }
 
 const SortProductList = ({ queryConfig }: Props) => {

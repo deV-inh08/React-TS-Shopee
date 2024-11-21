@@ -7,7 +7,7 @@ import { Link, useMatch} from 'react-router-dom'
   return (
    <header className='py-5'>
         <div className='max-w-7xl mx-auto px-4'>
-            <nav className='flex items-end justify-between items-center'>
+            <nav className='flex justify-between items-center'>
                 <Link to='/' className='flex items-center'>
                     <svg viewBox='0 0 192 65' className='h-8 fill-orange lg:h-11'>
                         <g fillRule='evenodd'>
