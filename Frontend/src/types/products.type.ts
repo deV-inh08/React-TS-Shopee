@@ -44,6 +44,8 @@ export interface ProductAddToCart  {
   total: number,
   discountPercentage: number,
   discountedPrice: number
-  thumbnail: string
+  thumbnail: string,
+  disable?: boolean
+  checked?: boolean
 }
 

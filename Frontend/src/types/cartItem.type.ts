@@ -7,4 +7,6 @@ export interface CartItem  {
     discountPercentage: number;
     discountedPrice: number;
     thumbnail: string;
+    disable?: boolean
+    checked?: boolean
 }
