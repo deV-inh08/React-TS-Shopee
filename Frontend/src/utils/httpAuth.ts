@@ -30,7 +30,6 @@ class Http {
 
         this.instance.interceptors.response.use(
             (response) =>  {
-                console.log(response)
                 const { url } = response.config
                 if(url ===path.login|| url === path.register) {
                     this.accessToken = (response.data as AuthResponse).data.access_token
@@ -48,6 +47,9 @@ class Http {
                     const data: any | undefined = error.response?.data
                     const message = data?.message || error.message
                     toast.error(message)
+                }
+                if(error.response?.status === HttpStatusCode.Unauthorized) {
+                    clearLocalStorage()
                 }
                 return Promise.reject(error)
             }

@@ -23,7 +23,7 @@ const priceSchema = schema.pick(["price_min", "price_max"]);
 
 const AsideFilter = ({ categories, queryConfig, onCategoryClick }: Props) => {
     const {category} = queryConfig;
-    const {control, handleSubmit, watch, formState: { errors }} = useForm<FormData>({
+    const {control, handleSubmit, formState: { errors }} = useForm<FormData>({
         defaultValues: {
             price_min: "",
             price_max: ""
@@ -33,12 +33,11 @@ const AsideFilter = ({ categories, queryConfig, onCategoryClick }: Props) => {
         shouldFocusError: false
     });
     
-    const valueForm = watch();
+    // const valueForm = watch();
     const onSubmit = handleSubmit((data) => {
         console.log(data)
         }
     );
-    console.log(valueForm);
 
     return (
         <div className='py-4'>

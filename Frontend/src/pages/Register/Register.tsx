@@ -41,7 +41,8 @@ const Register = () => {
             },
             onError: (error) => {
                 if(isAxiosUnprocessableEntityError<ErrorResponse<Omit<FormData, "confirm_password">>>(error)) {
-                    const formError = error.response?.data.data
+                    const formError = error.response?.data;
+                    console.log(formError)
                     if(formError) {
                         Object.keys(formError).forEach((key) => {
                             setError(key as keyof Omit<FormData, "confirm_password">, {

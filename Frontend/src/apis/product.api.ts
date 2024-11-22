@@ -5,7 +5,6 @@ import { Categories as CategoriesType } from "../types/category.type";
 
 const URL = `products`;
 
-
 const productsAPI = {
   getProducts(params: ProductListConfig) {
     return httpProduct.get<SuccessResponse<ProductList>>(URL, { params }).then((response) => {

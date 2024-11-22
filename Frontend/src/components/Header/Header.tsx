@@ -4,6 +4,7 @@ import path from '../../constants/path'
 import { formatCurrency } from '../../utils/utils'
 import { useCart } from '../../contexts/CartContext'
 import useSearchProducts from '../../hooks/useSearchProducts'
+import NavHeader from '../NavHeader'
 
 
 const Header = () => {
@@ -13,6 +14,7 @@ const Header = () => {
     return (
         <div className='pb-5 pt-2 bg-orange text-white'>
             <div className='container'>
+                <NavHeader></NavHeader>
                 <div className='grid grid-cols-12 gap-4 items-end mt-3'>
                     <Link to='/' className='col-span-2'>
                         <svg viewBox='0 0 192 65' className='h-8 fill-white lg:h-11'>

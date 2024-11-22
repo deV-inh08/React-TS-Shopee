@@ -8,7 +8,7 @@ interface AppContextInterface {
     setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
     profile: User | null
     setProfile: React.Dispatch<React.SetStateAction<User | null>>
-
+    reset: () => void
 };
 
 // Initial context value
@@ -17,6 +17,7 @@ const initialAppContext: AppContextInterface = {
     setIsAuthenticated: () => null,
     profile: null,
     setProfile: () => null,
+    reset: () => null
 };
 
 // Create the context
@@ -30,6 +31,10 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
     const [profile, setProfile] = useState<User | null>(initialAppContext.profile);
 
+    const reset = () => {
+        setIsAuthenticated(false)
+        setProfile(null)
+    }
 
     // Passing state and function to context value
     const value = {
@@ -37,7 +42,10 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         setIsAuthenticated,
         profile,
         setProfile,
+        reset,
     };
+
+    
 
     return (
         <AppContext.Provider value={value}>

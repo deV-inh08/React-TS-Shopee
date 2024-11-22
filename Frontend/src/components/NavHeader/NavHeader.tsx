@@ -21,6 +21,15 @@ const NavHeader = () => {
     const handleLogout = () => {
         logoutMutation.mutate()
     };
+
+    const handleSliceName = (email: string) => {
+        if(email && !email.includes("@")) {
+            throw new Error("Email is not valid")
+        } else if(email && email.includes("@")) {
+            return email.split("@")[0]
+        }
+    }
+
     return (
         <div className='flex justify-end'>
             <Popover
@@ -49,7 +58,7 @@ const NavHeader = () => {
             {isAuthenticated && (
                 <Popover className='flex items-center py-1 hover:text-gray-300 cursor-pointer' renderPopover={
                     <div>
-                        <Link to="/" className='block py-2 px-4 hover:bg-slate-100 bg-white hover:text-orange'>Tài khoảng của tôi</Link>
+                        <Link to="/user/profile" className='block py-2 px-4 hover:bg-slate-100 bg-white hover:text-orange'>Tài khoảng của tôi</Link>
                         <Link to="/" className='block py-2 px-4 hover:bg-slate-100 bg-white hover:text-orange'>Đơn mua</Link>
                         <button onClick={handleLogout} type="button" className='text-left w-full block py-2 px-3 hover:bg-slate-100 bg-white hover:text-orange'>Đăng xuất</button>
                     </div>
@@ -57,7 +66,7 @@ const NavHeader = () => {
                     <div className='w-6 h-6 mr-2 flex-shrink-0'>
                         <img className='w-full h-full object-cover rounded-full' src="https://plus.unsplash.com/premium_photo-1728579090264-5ba3706a5652?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw2fHx8ZW58MHx8fHx8" alt="avatar" />
                     </div>
-                    <p className='text-white'>{profile?.email}</p>
+                    <p className='text-white'>{handleSliceName(profile?.email)}</p>
                 </Popover>
             )}
             {!isAuthenticated && (

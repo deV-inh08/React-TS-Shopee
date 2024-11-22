@@ -5,13 +5,16 @@ import Register from '../pages/Register'
 import RegisterLayout from '../layouts/RegisterLayout/RegisterLayout'
 import MainLayout from '../layouts/MainLayout'
 // import PageNotFound from '../pages/PageNotFound'
-import Profile from '../pages/Profile'
+import Profile from '../pages/User/pages/Profile'
 import { useContext } from 'react'
 import { AppContext } from '../contexts/app.context'
 import path from '../constants/path'
 import ProductDetail from '../pages/ProductDetail'
 import Cart from '../components/Cart'
 import CartLayout from '../layouts/CartLayout'
+import UserLayout from '../pages/User/layouts/UserLayout'
+import ChangePassword from '../pages/User/pages/ChangePassword'
+import PageNotFound from '../pages/PageNotFound'
 
 
 
@@ -42,21 +45,40 @@ export const useRouteElements = () => {
             element: <ProtectedRoute></ProtectedRoute>,
             children: [
                 {
-                    path: path.profile,
-                    element: (
-                        <MainLayout>
-                            <Profile />
-                        </MainLayout>
-                    )
-                },
-                {
                     path: path.cart,
                     element: (
                         <CartLayout>
                             <Cart/>
                         </CartLayout>
                     )
-                }
+                }, 
+                {
+                    path: path.user,
+                    element: (
+                        <MainLayout>
+                             <UserLayout></UserLayout>
+                        </MainLayout>
+                    ),
+                    children: [
+                        {
+                            path: path.profile,
+                            element: <Profile></Profile>
+                        },
+                        {
+                            path: path.changePassword,
+                            element: <ChangePassword></ChangePassword>
+                        }
+                    ]
+                },
+                {
+                    path: path.productDetail,
+                    index: true,
+                    element: (
+                        <MainLayout>
+                            <ProductDetail></ProductDetail>
+                        </MainLayout>
+                    )
+                },
             ]
         },
 
@@ -75,18 +97,14 @@ export const useRouteElements = () => {
             ]
         },
         {
-            path: path.productDetail,
-            index: true,
-            element: (
+            path: "*",
+            element: ( 
                 <MainLayout>
-                    <ProductDetail></ProductDetail>
-                </MainLayout>
+                    <PageNotFound/>
+                </MainLayout> 
             )
-        },
-        {
-            path: "/*",
-            element: <MainLayout><ProductList/></MainLayout>
-        }   
+        }  
+         
     ])
     return routeElements
 }

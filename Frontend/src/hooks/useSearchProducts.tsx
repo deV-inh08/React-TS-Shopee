@@ -13,7 +13,7 @@ const nameSchema = schema.pick(["name"])
 const useSearchProducts = () => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
-    const {register, handleSubmit} = useForm<FormData>({
+    const { register, handleSubmit } = useForm<FormData>({
         defaultValues: {
             name: ""
         },
