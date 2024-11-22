@@ -1,19 +1,19 @@
 [
   {
     "id": 1,
-    "email": "vintd2004@gmail.com",
-    "password": "12345677",
+    "email": "vin123@gmail.com",
+    "password": "123456",
     "roles": "user"
   },
   {
     "id": 2,
     "email": "abc123@gmail.com",
-    "password": "12345677",
+    "password": "123456",
     "roles": "user"
   },
   {
     "id": 3,
-    "email": "acb2004@gmail.com",
+    "email": "abc345@gmail.com",
     "password": "12345677",
     "roles": "user"
   }
