@@ -10,6 +10,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Schema, schema } from '../../utils/rules';
 import { NoUndefinedField } from '../../types/utils.type';
 import { ObjectSchema } from 'yup';
+import { useTranslation } from 'react-i18next'
 
 interface Props {
     categories: Categories[]
@@ -22,6 +23,7 @@ type FormData = NoUndefinedField<Pick<Schema, "price_max" | "price_min">>
 const priceSchema = schema.pick(["price_min", "price_max"]);
 
 const AsideFilter = ({ categories, queryConfig, onCategoryClick }: Props) => {
+  const { t } = useTranslation('home') // neu dung nhieu [home, product]
     const {category} = queryConfig;
     const {control, handleSubmit, formState: { errors }} = useForm<FormData>({
         defaultValues: {
@@ -55,7 +57,7 @@ const AsideFilter = ({ categories, queryConfig, onCategoryClick }: Props) => {
                         d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" 
                     />
                 </svg>
-                <p>Tất cả danh mục</p>
+                {t('aside filter.all categories')}
             </Link>
             <div>
                 <div className='h-[1px] bg-gray-400 my-4' ></div>
@@ -108,7 +110,7 @@ const AsideFilter = ({ categories, queryConfig, onCategoryClick }: Props) => {
                         />
                     </svg>
                   
-                    <span className='font-bold text-2xl'>Bộ lọc tìm kiếm</span>
+                    <span className='font-bold text-2xl'>{t('aside filter.filter search')}</span>
                 </Link>
                 <div className='h-[1px] bg-gray-400 my-4' ></div>
                 <div>

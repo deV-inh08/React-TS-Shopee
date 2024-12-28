@@ -15,12 +15,14 @@ import { useCart } from '../../contexts/CartContext';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import path from '../../constants/path';
+import { useTranslation } from 'react-i18next';
 
 const syncReactToLocal = (cartItems: CartItem[]) => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems))
 };
 
 const ProductDetail = () => {
+  const { t } = useTranslation('product')
     const [ buyCount, setBuyCount ] = useState<number>(1);
     const { id } = useParams();
     const imgRef = useRef<HTMLImageElement>(null);
@@ -217,7 +219,7 @@ const ProductDetail = () => {
                                             Số lượng:
                                         </p>
                                         <QuantityController onDecrease={handleBuyCount} onIncrease={handleBuyCount} onType={handleBuyCount} value={buyCount} max={productDetailData.stock}></QuantityController>
-                                        <div className='ml-6 text-sm text-gray-500'>{productDetailData.data.stock} Sản phẩm có sẵn</div>
+                                        <div className='ml-6 text-sm text-gray-500'>{productDetailData.data.stock} {t('available')}</div>
                                     </div>
                                     <div className='mt-8 flex items-center'>
                                         <button onClick={() => handleAddToCart(USERID)} className='flex h-12 items-center justify-center rounded-sm border border-orange bg-orange/10 px-5 text-orange shadow-sm hover:bg-orange/5 '>

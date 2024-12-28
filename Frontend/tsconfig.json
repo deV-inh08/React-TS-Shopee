@@ -7,5 +7,7 @@
   "compilerOptions": {
     "target": "ES2015",
     "baseUrl": ".",
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   }
 }

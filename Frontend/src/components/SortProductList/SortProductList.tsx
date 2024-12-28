@@ -4,7 +4,7 @@ import { ProductListConfig } from '../../types/products.type'
 import classNames from 'classnames'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 import path from '../../constants/path'
-import { omit } from 'lodash'
+import omit from 'lodash/omit'
 
 
 interface Props {

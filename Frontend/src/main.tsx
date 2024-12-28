@@ -10,6 +10,7 @@ import { QueryParamProvider,  } from "use-query-params"
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 import { CartProvider } from './contexts/CartContext.tsx'
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary.tsx'
+import 'src/i18n/i18n'
 
 const queryClient = new QueryClient({
   defaultOptions: {

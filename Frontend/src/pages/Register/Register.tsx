@@ -6,7 +6,8 @@ import Input from '../../components/Input';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
 import authAPI from '../../apis/auth.api';
-import { omit } from 'lodash';
+// khong co tree-checking
+import omit from 'lodash/omit'; // handle tree-checking
 import { isAxiosUnprocessableEntityError } from '../../utils/utils';
 import { ErrorResponse } from '../../types/utils.type';
 import { AppContext } from '../../contexts/app.context';
