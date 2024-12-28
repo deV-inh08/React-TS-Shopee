@@ -1,22 +1,22 @@
+import { lazy, Suspense } from 'react'
 import {Navigate, Outlet, useRoutes } from 'react-router-dom'
-import ProductList from '../pages/ProductList'
-import Login from '../pages/Login'
-import Register from '../pages/Register'
 import RegisterLayout from '../layouts/RegisterLayout/RegisterLayout'
 import MainLayout from '../layouts/MainLayout'
-// import PageNotFound from '../pages/PageNotFound'
-import Profile from '../pages/User/pages/Profile'
 import { useContext } from 'react'
 import { AppContext } from '../contexts/app.context'
 import path from '../constants/path'
-import ProductDetail from '../pages/ProductDetail'
-import Cart from '../components/Cart'
 import CartLayout from '../layouts/CartLayout'
 import UserLayout from '../pages/User/layouts/UserLayout'
-import ChangePassword from '../pages/User/pages/ChangePassword'
-import PageNotFound from '../pages/PageNotFound'
 
 
+const Login = lazy(() => import('../pages/Login'))
+const Register = lazy(() => import('../pages/Register'))
+const Profile = lazy(() => import('../pages/User/pages/Profile'))
+const ProductDetail = lazy(() => import('../pages/ProductDetail'))
+const Cart = lazy(() => import('../components/Cart'))
+const ChangePassword = lazy(() => import('../pages/User/pages/ChangePassword'))
+const ProductList = lazy(() => import('../pages/ProductList'))
+const PageNotFound = lazy(() => import('../pages/PageNotFound'))
 
 function ProtectedRoute() {
     const {isAuthenticated} = useContext(AppContext)
@@ -48,7 +48,9 @@ export const useRouteElements = () => {
                     path: path.cart,
                     element: (
                         <CartLayout>
+                          <Suspense>
                             <Cart/>
+                          </Suspense>
                         </CartLayout>
                     )
                 }, 
@@ -62,11 +64,17 @@ export const useRouteElements = () => {
                     children: [
                         {
                             path: path.profile,
-                            element: <Profile></Profile>
+                            element: 
+                            <Suspense>
+                              <Profile></Profile>
+                            </Suspense>
                         },
                         {
                             path: path.changePassword,
-                            element: <ChangePassword></ChangePassword>
+                            element: 
+                            <Suspense>
+                              <ChangePassword></ChangePassword>
+                            </Suspense>
                         }
                     ]
                 },
@@ -75,7 +83,9 @@ export const useRouteElements = () => {
                     index: true,
                     element: (
                         <MainLayout>
-                            <ProductDetail></ProductDetail>
+                            <Suspense>
+                              <ProductDetail></ProductDetail>
+                            </Suspense>
                         </MainLayout>
                     )
                 },
@@ -88,11 +98,21 @@ export const useRouteElements = () => {
             children: [
                 {
                     path: path.login,
-                    element: <RegisterLayout><Login/></RegisterLayout>
+                    element: 
+                    <RegisterLayout>
+                      <Suspense>
+                        <Login/>
+                      </Suspense>
+                    </RegisterLayout>
                 },
                 {
                     path: path.register,
-                    element: <RegisterLayout><Register/></RegisterLayout>
+                    element: 
+                      <RegisterLayout>
+                        <Suspense>
+                          <Register/>
+                        </Suspense>
+                      </RegisterLayout>
                 },  
             ]
         },
@@ -100,7 +120,9 @@ export const useRouteElements = () => {
             path: "*",
             element: ( 
                 <MainLayout>
+                  <Suspense>
                     <PageNotFound/>
+                  </Suspense>
                 </MainLayout> 
             )
         }  
