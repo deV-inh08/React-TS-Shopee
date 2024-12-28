@@ -9,6 +9,7 @@ import { AppProvider } from './contexts/app.context.tsx'
 import { QueryParamProvider,  } from "use-query-params"
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 import { CartProvider } from './contexts/CartContext.tsx'
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary.tsx'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,7 +27,9 @@ createRoot(document.getElementById('root')!).render(
       <QueryClientProvider client={queryClient}>
         <AppProvider>
             <CartProvider>
-             <App />
+              <ErrorBoundary>
+               <App /> 
+              </ErrorBoundary>
             </CartProvider>
         </AppProvider>
         <ReactQueryDevtools initialIsOpen={false}></ReactQueryDevtools>

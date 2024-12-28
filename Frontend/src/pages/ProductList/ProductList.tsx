@@ -21,10 +21,7 @@ const ProductList = () => {
     search: "",
   });
 
-  const [searchTerm, setSeachTerm] = useState<string>("");
-
   const location = useLocation();
-
 
   useEffect(() => {
   const searchParams = new URLSearchParams(location.search);
@@ -36,7 +33,6 @@ const ProductList = () => {
       category: searchParams.get("category") || '',
       search: searchParams.get("search") || '',
     })
-    setSeachTerm(searchParams.get("search") || "")
   },[location.search])
 
   const { data: productData, isLoading } = useQuery({
@@ -77,8 +73,6 @@ const ProductList = () => {
       return updatedConfig;
     });
   };
-
-
   return (
     <div className='bg-gray-200 py-6'>
       <div className='container'>
@@ -89,17 +83,7 @@ const ProductList = () => {
             )}
           </div>
           <div className='col-span-9 '>
-            {/* <div className="mb-4 ">
-              <input
-                type="text"
-                value={searchTerm}
-                placeholder='Free Ship Đơn Từ 0đ' 
-                onChange={handleSearch}
-                autoFocus // Gọi hàm tìm kiếm khi người dùng nhập
-                className='absolute flex flex-grow border-none bg-transparent top-[55px] xl:left-[540px] lg:left-[200px] md:left-[200px] sm:left-[100px] w-[850px] px-3 py-2 text-black outline-none'
-              />
-            </div> */}
-            <SortProductList queryConfig={queryConfig} TOTALPAGE={TOTALPAGE}></SortProductList>
+            <SortProductList queryConfig={queryConfig}></SortProductList>
             {productData && productData.products && productData.products.length > 0 
               ? (
                 <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 items-stretch'>

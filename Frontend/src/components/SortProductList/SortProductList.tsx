@@ -20,7 +20,8 @@ const SortProductList = ({ queryConfig }: Props) => {
     const handleSort = (sortByValue: Exclude<ProductListConfig["sortBy"], undefined>) => {
         navigate({
             pathname: path.home,
-            search: createSearchParams(omit(
+            search: createSearchParams(
+              omit(
                 {
                     ...queryConfig,
                     sortBy: sortByValue,
@@ -72,28 +73,6 @@ const SortProductList = ({ queryConfig }: Props) => {
                         <option value={orderConstant.desc}>Giá: Cao đến thấp</option>
                         <option value={orderConstant.asc}>Giá: Thấp đến cao</option>
                     </select>
-                </div>
-                <div className='flex items-center'>
-                {/* <article>
-                    <span className='text-orange mr-2'>
-                        1
-                    </span>
-                    <span>2</span>
-                </article>
-                <article>
-                    <div className='ml-2'>
-                        <button className='px-3 h-8 rounded-sm bg-white/60 hover:bg-slate-100 cursor-not-allowed shadow-sm'>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-                            </svg>
-                        </button>
-                        <button className='px-3 h-8 rounded-sm bg-white/60 hover:bg-slate-100 shadow-sm'>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                            </svg>
-                        </button>
-                    </div>
-                </article> */}
                 </div>
             </div>
         </div>

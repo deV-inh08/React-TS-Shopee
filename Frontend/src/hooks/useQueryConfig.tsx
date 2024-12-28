@@ -18,7 +18,7 @@ const useQueryConfig = () => {
       category: queryParams.category,
       search: queryParams.search,
     }
-    , isUndefined
+    ,isUndefined
   )
   return queryConfig
 };

@@ -31,7 +31,7 @@ const Cart = () => {
         }))
     };
 
-    const isAllChecked = useMemo(() => cartItems.every((item) => item.checked), [cartItems])
+    const isAllChecked = useMemo(() => cartItems.every((item) => item.checked), [cartItems]);
 
     const handleCheckAll = () => {
         setCartItems(prev => prev.map((item) => (
@@ -91,7 +91,6 @@ const Cart = () => {
             toast.success("Mua hàng thành công", { autoClose: 1000 })
         }
     };
-
 
     return (
         <div className='bg-neutral-100 py-16'>
